@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Exceptions\RequiredGameElementMissingException.cs" />
     <Compile Include="Game\Abstract\ILevel.cs" />
     <Compile Include="Game\Abstract\ILoadContent.cs" />
     <Compile Include="Game\Adapters\Abstract\IContentManagerAdapter.cs" />

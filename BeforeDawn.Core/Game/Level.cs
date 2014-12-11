@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using BeforeDawn.Core.Exceptions;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Adapters.Abstract;
 using BeforeDawn.Core.Game.Helpers;
@@ -19,21 +20,24 @@ namespace BeforeDawn.Core.Game
     {
         private int _levelIndex;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IIoC _ioc;
         private TimeSpan _timeRemaining;
         private readonly List<Texture2D> _textureLayers;
-        private readonly List<List<Tile>> _tiles; 
+        private readonly List<ITile> _tiles; 
 
-        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider)
+        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider, IIoC ioc)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
-            
+            if (ioc == null) throw new ArgumentNullException("ioc");
+
             contentManager.Create(serviceProvider, "Content");
             Content = contentManager;
             _serviceProvider = serviceProvider;
+            _ioc = ioc;
 
             _textureLayers = new List<Texture2D>();
-            _tiles = new List<List<Tile>>();
+            _tiles = new List<ITile>();
         }
 
         public IContentManagerAdapter Content { get; private set; }
@@ -52,19 +56,33 @@ namespace BeforeDawn.Core.Game
 
             var matches = ExtractTiles(lines.ToList());
 
-            //var rowTiles = matches.Select(match => ).ToList();
+            _tiles.AddRange(matches.Select(match =>
+            {
+                var tile = _ioc.Resolve<ITile>();
+                tile.Initialize(match);
+                return tile;
+            }));
 
-            //_tiles.Add(rowTiles);
+            EnsureHasStartPosition();
+            EnsureHasEndPosition();
         }
 
-        private bool EnsureHasStartPosition()
+        private void EnsureHasStartPosition()
         {
-            return true;
+            var hasTile = _tiles.Any(tile => tile.IsStartTile);
+            if (!hasTile)
+            {
+                throw new RequiredGameElementMissingException("Missing start position tile");
+            }
         }
 
-        private bool EnsureHasEndPosition()
+        private void EnsureHasEndPosition()
         {
-            return true;
+            var hasTile = _tiles.Any(tile => tile.IsEndTile);
+            if (!hasTile)
+            {
+                throw new RequiredGameElementMissingException("Missing end position tile");
+            }
         }
 
         private IEnumerable<TileMatch> ExtractTiles(List<string> lines)
