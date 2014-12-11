@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BeforeDawn.Core.Game;
+
 #endregion
 
 namespace BeforeDawn.Core
@@ -18,7 +20,7 @@ namespace BeforeDawn.Core
         [STAThread]
         static void Main()
         {
-            using (var game = new Game1())
+            using (var game = new GameLoop())
                 game.Run();
         }
     }
