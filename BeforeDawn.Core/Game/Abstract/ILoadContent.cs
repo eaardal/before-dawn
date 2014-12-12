@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BeforeDawn.Core.Game.Adapters.Abstract;
+using BeforeDawn.Core.Adapters.Abstract;
 
 namespace BeforeDawn.Core.Game.Abstract
 {

@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
-using BeforeDawn.Core.Game.Adapters.Abstract;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BeforeDawn.Core.Game
 {
-    class GameEngine : ILoadContent
+    class GameEngine : ILoadContent, IDraw
     {
         private readonly IIoC _ioc;
         private ILevel _currentLevel;
         private int _levelIndex;
         private int _numberOfLevels;
+        private readonly ITitleContainerAdapter _titleContainer;
 
-        public GameEngine(IIoC ioc)
+        public GameEngine(IIoC ioc, ITitleContainerAdapter titleContainer)
         {
             if (ioc == null) throw new ArgumentNullException("ioc");
+            if (titleContainer == null) throw new ArgumentNullException("titleContainer");
+
             _ioc = ioc;
+            _titleContainer = titleContainer;
         }
 
         public void LoadContent(ISpriteBatchAdapter spriteBatch)
@@ -41,7 +45,7 @@ namespace BeforeDawn.Core.Game
 
             try
             {
-                using (var stream = TitleContainer.OpenStream("Content/Levels/level" + _levelIndex + ".txt"))
+                using (var stream = _titleContainer.OpenStream("Content/Levels/level" + _levelIndex + ".txt"))
                 {
                     _currentLevel = _ioc.Resolve<Level>();
                     _currentLevel.Initialize(stream, _levelIndex);
@@ -59,5 +63,9 @@ namespace BeforeDawn.Core.Game
             LoadNextLevel();
         }
 
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            _currentLevel.Draw(gameTime, spriteBatch);
+        }
     }
 }

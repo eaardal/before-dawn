@@ -1,4 +1,4 @@
-﻿using BeforeDawn.Core.Game.Adapters.Abstract;
+﻿using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,6 +52,11 @@ namespace BeforeDawn.Core.Game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            _spriteBatch.Begin();
+
+            _gameEngine.Draw(gameTime, _spriteBatch);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }

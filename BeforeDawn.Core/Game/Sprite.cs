@@ -20,12 +20,23 @@ namespace BeforeDawn.Core.Game
         public float Depth { get; protected set; }
         public bool UseCenterAsOrigin { get; protected set; }
 
+        protected Sprite() { }
+
         protected Sprite(Texture2D texture, Vector2 location)
             : this(texture, location, new Rectangle((int)location.X, (int)location.Y, texture.Width, texture.Height))
-        {
-        }
+        { }
 
         protected Sprite(Texture2D texture, Vector2 location, Rectangle boundaries)
+        {
+            SetDefaultValues(texture, location, boundaries);
+        }
+
+        protected void SetDefaultValues(Texture2D texture, Vector2 location)
+        {
+            SetDefaultValues(texture, location, new Rectangle((int)location.X, (int)location.Y, texture.Width, texture.Height));
+        }
+
+        protected void SetDefaultValues(Texture2D texture, Vector2 location, Rectangle boundaries)
         {
             Boundaries = boundaries;
             Texture = texture;
@@ -51,7 +62,7 @@ namespace BeforeDawn.Core.Game
 
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, Location, Color.White);
         }

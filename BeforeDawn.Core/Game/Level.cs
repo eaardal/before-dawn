@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Exceptions;
 using BeforeDawn.Core.Game.Abstract;
-using BeforeDawn.Core.Game.Adapters.Abstract;
 using BeforeDawn.Core.Game.Helpers;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
@@ -23,34 +23,39 @@ namespace BeforeDawn.Core.Game
         private readonly IIoC _ioc;
         private TimeSpan _timeRemaining;
         private readonly List<Texture2D> _textureLayers;
-        private readonly List<ITile> _tiles; 
+        private readonly List<ITile> _tiles;
+        private readonly IStreamReaderAdapter _streamReader;
+        private readonly ITimeSpanAdapter _timeSpan;
+        public IContentManagerAdapter Content { get; private set; }
 
-        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider, IIoC ioc)
+        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider, IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
             if (ioc == null) throw new ArgumentNullException("ioc");
+            if (streamReader == null) throw new ArgumentNullException("streamReader");
+            if (timeSpan == null) throw new ArgumentNullException("timeSpan");
 
             contentManager.Create(serviceProvider, "Content");
             Content = contentManager;
             _serviceProvider = serviceProvider;
             _ioc = ioc;
+            _streamReader = streamReader;
+            _timeSpan = timeSpan;
 
             _textureLayers = new List<Texture2D>();
             _tiles = new List<ITile>();
         }
-
-        public IContentManagerAdapter Content { get; private set; }
-
-        public void Initialize(Stream levelLayoutStream, int levelIndex)
+        
+        public void Initialize(IStreamAdapter levelLayoutStream, int levelIndex)
         {
             _levelIndex = levelIndex;
-            _timeRemaining = TimeSpan.FromMinutes(2.0);
+            _timeRemaining = _timeSpan.FromMinutes(2.0);
 
             LoadTiles(levelLayoutStream);
         }
-        
-        private void LoadTiles(Stream fileStream)
+
+        private void LoadTiles(IStreamAdapter fileStream)
         {
             var lines = ReadLines(fileStream);
 
@@ -111,7 +116,7 @@ namespace BeforeDawn.Core.Game
                     
                     tiles.Add(new TileMatch
                     {
-                        TileType = match.Value.ToCharArray()[0],
+                        TileType = match.Value,
                         X = xCounter,
                         Y = yCounter
                     });
@@ -123,12 +128,12 @@ namespace BeforeDawn.Core.Game
             return tiles;
         }
 
-        private IEnumerable<string> ReadLines(Stream fileStream)
+        private IEnumerable<string> ReadLines(IStreamAdapter fileStream)
         {
             int width;
             var lines = new List<string>();
 
-            using (var reader = new StreamReader(fileStream))
+            using (var reader = _streamReader.ReadStream(fileStream))
             {
                 var line = reader.ReadLine();
 
@@ -154,6 +159,11 @@ namespace BeforeDawn.Core.Game
         public void Dispose()
         {
             
+        }
+
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            _tiles.ForEach(tile => tile.Draw(gameTime, spriteBatch));
         }
     }
 }

@@ -35,14 +35,24 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Adapters\Abstract\IContentManagerAdapter.cs" />
+    <Compile Include="Adapters\Abstract\ISpriteBatchAdapter.cs" />
+    <Compile Include="Adapters\Abstract\IStreamAdapter.cs" />
+    <Compile Include="Adapters\Abstract\IStreamReaderAdapter.cs" />
+    <Compile Include="Adapters\Abstract\ITimeSpanAdapter.cs" />
+    <Compile Include="Adapters\Abstract\ITitleContainerAdapter.cs" />
+    <Compile Include="Adapters\ContentManagerAdapter.cs" />
+    <Compile Include="Adapters\SpriteBatchAdapter.cs" />
+    <Compile Include="Adapters\StreamAdapter.cs" />
+    <Compile Include="Adapters\StreamReaderAdapter.cs" />
+    <Compile Include="Adapters\TimeSpanAdapter.cs" />
+    <Compile Include="Adapters\TitleContainerAdapter.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Exceptions\RequiredGameElementMissingException.cs" />
+    <Compile Include="Game\Abstract\IDraw.cs" />
     <Compile Include="Game\Abstract\ILevel.cs" />
     <Compile Include="Game\Abstract\ILoadContent.cs" />
-    <Compile Include="Game\Adapters\Abstract\IContentManagerAdapter.cs" />
-    <Compile Include="Game\Adapters\Abstract\ISpriteBatchAdapter.cs" />
-    <Compile Include="Game\Adapters\ContentManagerAdapter.cs" />
-    <Compile Include="Game\Adapters\SpriteBatchAdapter.cs" />
+    <Compile Include="Game\Abstract\ITile.cs" />
     <Compile Include="Game\GameEngine.cs" />
     <Compile Include="Game\GameLoop.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
@@ -67,6 +77,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Levels\level1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Tiles\Tile_Default.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Tiles\Tile_Exit.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />

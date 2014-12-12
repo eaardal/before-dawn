@@ -17,10 +17,16 @@ namespace BeforeDawn.Core
                 .AsSelf()
                 .AsImplementedInterfaces();
 
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .Where(a => a.Name.EndsWith("Adapter"))
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
             builder.Register<IIoC>(i => new IoC()).SingleInstance();
 
             builder.Register<IServiceProvider>(p => game.Services);
-
+            
             var container = builder.Build();
 
             var ioc = container.Resolve<IIoC>();
