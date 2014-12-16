@@ -66,8 +66,7 @@ namespace BeforeDawn.Core.Game
 
             var startTile = _tiles.Single(tile => tile.IsStartTile);
 
-            //_player.Initialize(startTile.Location);
-            _player.Initialize(new Vector2(200f, 200f));
+            _player.Initialize(startTile.Location);
         }
 
         private void LoadTiles(IStreamAdapter fileStream)

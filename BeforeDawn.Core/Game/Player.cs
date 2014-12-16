@@ -16,8 +16,10 @@ namespace BeforeDawn.Core.Game
         private readonly Rectangle _facingSouthTextureOffset;
         private readonly Rectangle _facingWestTextureOffset;
         private readonly Rectangle _facingEastTextureOffset;
-        private const float VelocityX = 10;
-        private const float VelocityY = 10;
+        private const float VelocityX = 50;
+        private const float VelocityY = 50;
+        private const int MovementSpeed = 350;
+        private int _aggregatedGameTime;
 
         public Player(IContentManagerAdapter contentManager)
         {
@@ -32,34 +34,61 @@ namespace BeforeDawn.Core.Game
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.W))
+            _aggregatedGameTime += gameTime.ElapsedGameTime.Milliseconds;
+            
+            if (_aggregatedGameTime > MovementSpeed)
             {
-                SourceRectangle = new Rectangle(_facingNorthTextureOffset.X, _facingNorthTextureOffset.Y,
-                    _facingNorthTextureOffset.Width, _facingNorthTextureOffset.Height);
+                if (keyboardState.IsKeyDown(Keys.W))
+                {
+                    FaceNorth();
 
-                Location = new Vector2(Location.X, Location.Y - VelocityY);
-            }
-            else if (keyboardState.IsKeyDown(Keys.A))
-            {
-                SourceRectangle = new Rectangle(_facingWestTextureOffset.X, _facingWestTextureOffset.Y,
-                    _facingWestTextureOffset.Width, _facingWestTextureOffset.Height);
+                    Location = new Vector2(Location.X, Location.Y - VelocityY);
+                }
+                else if (keyboardState.IsKeyDown(Keys.A))
+                {
+                    FaceWest();
 
-                Location = new Vector2(Location.X - VelocityX, Location.Y);
-            }
-            else if (keyboardState.IsKeyDown(Keys.S))
-            {
-                SourceRectangle = new Rectangle(_facingSouthTextureOffset.X, _facingSouthTextureOffset.Y,
-                    _facingSouthTextureOffset.Width, _facingSouthTextureOffset.Height);
+                    Location = new Vector2(Location.X - VelocityX, Location.Y);
+                }
+                else if (keyboardState.IsKeyDown(Keys.S))
+                {
+                    FaceSouth();
 
-                Location = new Vector2(Location.X, Location.Y + VelocityY);
-            }
-            else if (keyboardState.IsKeyDown(Keys.D))
-            {
-                SourceRectangle = new Rectangle(_facingEastTextureOffset.X, _facingEastTextureOffset.Y,
-                    _facingEastTextureOffset.Width, _facingEastTextureOffset.Height);
+                    Location = new Vector2(Location.X, Location.Y + VelocityY);
+                }
+                else if (keyboardState.IsKeyDown(Keys.D))
+                {
+                    FaceEast();
 
-                Location = new Vector2(Location.X + VelocityX, Location.Y);
+                    Location = new Vector2(Location.X + VelocityX, Location.Y);
+                }
+
+                _aggregatedGameTime = 0;
             }
+        }
+
+        private void FaceEast()
+        {
+            SourceRectangle = new Rectangle(_facingEastTextureOffset.X, _facingEastTextureOffset.Y,
+                _facingEastTextureOffset.Width, _facingEastTextureOffset.Height);
+        }
+
+        private void FaceSouth()
+        {
+            SourceRectangle = new Rectangle(_facingSouthTextureOffset.X, _facingSouthTextureOffset.Y,
+                _facingSouthTextureOffset.Width, _facingSouthTextureOffset.Height);
+        }
+
+        private void FaceWest()
+        {
+            SourceRectangle = new Rectangle(_facingWestTextureOffset.X, _facingWestTextureOffset.Y,
+                _facingWestTextureOffset.Width, _facingWestTextureOffset.Height);
+        }
+
+        private void FaceNorth()
+        {
+            SourceRectangle = new Rectangle(_facingNorthTextureOffset.X, _facingNorthTextureOffset.Y,
+                _facingNorthTextureOffset.Width, _facingNorthTextureOffset.Height);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -71,6 +100,7 @@ namespace BeforeDawn.Core.Game
         {
             var texture = _contentManager.Load<Texture2D>("Player\\Player");
             SetDefaultValues(texture, location);
+            FaceEast();
             return this;
         }
 
