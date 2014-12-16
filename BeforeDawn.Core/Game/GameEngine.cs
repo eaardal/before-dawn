@@ -7,10 +7,11 @@ using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game
 {
-    class GameEngine : ILoadContent, IDraw
+    class GameEngine : ILoadContent, IDraw, IUpdate
     {
         private readonly IIoC _ioc;
         private ILevel _currentLevel;
@@ -66,6 +67,11 @@ namespace BeforeDawn.Core.Game
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             _currentLevel.Draw(gameTime, spriteBatch);
+        }
+
+        public void Update(GameTime gameTime, KeyboardState keyboardState)
+        {
+            _currentLevel.Update(gameTime, keyboardState);
         }
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game
 {
@@ -26,6 +27,8 @@ namespace BeforeDawn.Core.Game
         private readonly List<ITile> _tiles;
         private readonly IStreamReaderAdapter _streamReader;
         private readonly ITimeSpanAdapter _timeSpan;
+        private Player _player;
+
         public IContentManagerAdapter Content { get; private set; }
 
         public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider, IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan)
@@ -53,6 +56,18 @@ namespace BeforeDawn.Core.Game
             _timeRemaining = _timeSpan.FromMinutes(2.0);
 
             LoadTiles(levelLayoutStream);
+
+            SpawnPlayer();
+        }
+
+        private void SpawnPlayer()
+        {
+            _player = _ioc.Resolve<Player>();
+
+            var startTile = _tiles.Single(tile => tile.IsStartTile);
+
+            //_player.Initialize(startTile.Location);
+            _player.Initialize(new Vector2(200f, 200f));
         }
 
         private void LoadTiles(IStreamAdapter fileStream)
@@ -69,7 +84,28 @@ namespace BeforeDawn.Core.Game
             }));
 
             EnsureHasStartPosition();
+            EnsureHasOnlyOneStartPosition();
+
             EnsureHasEndPosition();
+            EnsureHasOnlyOneEndPosition();
+        }
+
+        private void EnsureHasOnlyOneStartPosition()
+        {
+            var nrOfTiles = _tiles.Count(tile => tile.IsStartTile);
+            if (nrOfTiles > 1)
+            {
+                throw new RequiredGameElementMissingException("Level " + _levelIndex + " has too many start positions (" + nrOfTiles + "). Can only have one.");
+            }
+        }
+
+        private void EnsureHasOnlyOneEndPosition()
+        {
+            var nrOfTiles = _tiles.Count(tile => tile.IsEndTile);
+            if (nrOfTiles > 1)
+            {
+                throw new RequiredGameElementMissingException("Level " + _levelIndex + " has too many end positions (" + nrOfTiles + "). Can only have one.");
+            }
         }
 
         private void EnsureHasStartPosition()
@@ -164,6 +200,13 @@ namespace BeforeDawn.Core.Game
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             _tiles.ForEach(tile => tile.Draw(gameTime, spriteBatch));
+
+            _player.Draw(gameTime, spriteBatch);
+        }
+
+        public void Update(GameTime gameTime, KeyboardState keyboardState)
+        {
+            _player.Update(gameTime, keyboardState);
         }
     }
 }

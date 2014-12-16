@@ -44,6 +44,7 @@ namespace BeforeDawn.Core.Game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            _gameEngine.Update(gameTime, Keyboard.GetState());
 
             base.Update(gameTime);
         }

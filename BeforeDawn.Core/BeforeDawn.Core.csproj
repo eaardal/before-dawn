@@ -52,7 +52,10 @@
     <Compile Include="Game\Abstract\IDraw.cs" />
     <Compile Include="Game\Abstract\ILevel.cs" />
     <Compile Include="Game\Abstract\ILoadContent.cs" />
+    <Compile Include="Game\Abstract\ISprite.cs" />
     <Compile Include="Game\Abstract\ITile.cs" />
+    <Compile Include="Game\Abstract\IUpdate.cs" />
+    <Compile Include="Game\Builders\PlayerBuilder.cs" />
     <Compile Include="Game\GameEngine.cs" />
     <Compile Include="Game\GameLoop.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
@@ -77,6 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Levels\level1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Player\Player.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Tiles\Tile_Default.png">

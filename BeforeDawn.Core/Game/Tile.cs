@@ -7,6 +7,7 @@ using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game
 {
@@ -56,6 +57,11 @@ namespace BeforeDawn.Core.Game
             LoadTile();
         }
 
+        public override void Update(GameTime gameTime, KeyboardState keyboardState)
+        {
+
+        }
+
         private void LoadTile()
         {
             if (TileType == "0")
@@ -90,12 +96,7 @@ namespace BeforeDawn.Core.Game
         {
             return _contentManager.Load<Texture2D>("Tiles/" + assetName);
         }
-
-        public override void Update(GameTime gameTime)
-        {
-
-        }
-
+        
         private Vector2 CalculateLocationForTilLayout(Texture2D texture)
         {
             var x = (TileLayoutX - 1) * texture.Width;

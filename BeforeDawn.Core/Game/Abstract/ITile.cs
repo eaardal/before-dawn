@@ -1,8 +1,9 @@
 ﻿using BeforeDawn.Core.Game.Helpers;
+using Microsoft.Xna.Framework;
 
 namespace BeforeDawn.Core.Game.Abstract
 {
-    internal interface ITile : IDraw
+    internal interface ITile : IDraw, ISprite
     {
         void Initialize(TileMatch match);
         string TileType { get; }

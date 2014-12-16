@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using BeforeDawn.Core.Adapters.Abstract;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game.Abstract
 {
@@ -8,5 +10,6 @@ namespace BeforeDawn.Core.Game.Abstract
     {
         void LoadNextLevel();
         void Initialize(IStreamAdapter stream, int levelIndex);
+        void Update(GameTime gameTime, KeyboardState keyboardState);
     }
 }

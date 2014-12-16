@@ -1,10 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BeforeDawn.Core.Game.Abstract;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game
 {
-    public abstract class Sprite
+    public abstract class Sprite : ISprite
     {
+        private Rectangle? _sourceRectangle;
         public Rectangle Boundaries { get; protected set; }
         public Texture2D Texture { get; protected set; }
         public Vector2 Location { get; protected set; }
@@ -14,7 +17,24 @@ namespace BeforeDawn.Core.Game
         public float Rotation { get; protected set; }
         public Color Color { get; protected set; }
         public Rectangle? DrawRectangle { get; protected set; }
-        public Rectangle? SourceRectangle { get; protected set; }
+
+        /// <summary>
+        /// SourceRectangle's X/Y value is based in the current Location.X/Y.
+        /// If the current Location is 100x,100y and SourceRectangle is 0x,50y, it will draw a rectangle at 100x,150y
+        /// </summary>
+        public Rectangle? SourceRectangle
+        {
+            get { return _sourceRectangle; }
+            protected set
+            {
+                if (value.HasValue)
+                {
+                    _sourceRectangle = value;
+                    Boundaries = new Rectangle(value.Value.X, value.Value.Y, value.Value.Width, value.Value.Height);
+                }
+            }
+        }
+
         public Vector2? Scale { get; protected set; }
         public SpriteEffects SpriteEffect { get; protected set; }
         public float Depth { get; protected set; }
@@ -72,6 +92,6 @@ namespace BeforeDawn.Core.Game
             spriteBatch.Draw(Texture, null, Boundaries, SourceRectangle, UseCenterAsOrigin ? Center : Origin, Rotation, Scale, Color, SpriteEffect, Depth);
         }
 
-        public abstract void Update(GameTime gameTime);
+        public abstract void Update(GameTime gameTime, KeyboardState keyboardState);
     }
 }
