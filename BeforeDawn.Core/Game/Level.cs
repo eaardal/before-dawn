@@ -28,6 +28,7 @@ namespace BeforeDawn.Core.Game
         private readonly IStreamReaderAdapter _streamReader;
         private readonly ITimeSpanAdapter _timeSpan;
         private Player _player;
+        private Action _levelCompleted;
 
         public IContentManagerAdapter Content { get; private set; }
 
@@ -50,10 +51,11 @@ namespace BeforeDawn.Core.Game
             _tiles = new List<ITile>();
         }
         
-        public void Initialize(IStreamAdapter levelLayoutStream, int levelIndex)
+        public void Initialize(IStreamAdapter levelLayoutStream, int levelIndex, Action levelCompleted)
         {
             _levelIndex = levelIndex;
             _timeRemaining = _timeSpan.FromMinutes(2.0);
+            _levelCompleted = levelCompleted;
 
             LoadTiles(levelLayoutStream);
 
@@ -205,7 +207,33 @@ namespace BeforeDawn.Core.Game
 
         public void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            _player.Update(gameTime, keyboardState);
+            var endTile = GetEndTile();
+            if (_player.Boundaries.Intersects(endTile.Boundaries))
+            {
+                GameOver();
+            }
+            else
+            {
+                _player.Update(gameTime, keyboardState);    
+            }
+        }
+
+        private void GameOver()
+        {
+            if (_levelCompleted != null)
+            {
+                _levelCompleted();
+            }
+        }
+
+        private ITile GetStartTile()
+        {
+            return _tiles.Single(tile => tile.IsStartTile);
+        }
+
+        private ITile GetEndTile()
+        {
+            return _tiles.Single(tile => tile.IsEndTile);
         }
     }
 }

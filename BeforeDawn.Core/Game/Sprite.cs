@@ -5,12 +5,23 @@ using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game
 {
-    public abstract class Sprite : ISprite
+    public abstract class Sprite : ISprite, IDraw, IUpdate
     {
         private Rectangle? _sourceRectangle;
+        private Vector2 _location;
         public Rectangle Boundaries { get; protected set; }
         public Texture2D Texture { get; protected set; }
-        public Vector2 Location { get; protected set; }
+
+        public Vector2 Location
+        {
+            get { return _location; }
+            protected set
+            {
+                _location = value;
+                Boundaries = new Rectangle((int)value.X, (int)value.Y, Boundaries.Width, Boundaries.Height);
+            }
+        }
+
         public Vector2 Center { get { return new Vector2(Boundaries.Width / 2.0f, Boundaries.Height / 2.0f); } }
         public Vector2 CenterLocation { get { return new Vector2(Location.X + Center.X, Location.Y + Center.Y); } }
         public Vector2 Origin { get; protected set; }
@@ -30,7 +41,7 @@ namespace BeforeDawn.Core.Game
                 if (value.HasValue)
                 {
                     _sourceRectangle = value;
-                    Boundaries = new Rectangle(value.Value.X, value.Value.Y, value.Value.Width, value.Value.Height);
+                    //Boundaries = new Rectangle(value.Value.X, value.Value.Y, value.Value.Width, value.Value.Height);
                 }
             }
         }

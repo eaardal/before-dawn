@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace BeforeDawn.Core.Game.Abstract
 {
-    internal interface ITile : IDraw, ISprite
+    internal interface ITile : ISprite
     {
         void Initialize(TileMatch match);
         string TileType { get; }

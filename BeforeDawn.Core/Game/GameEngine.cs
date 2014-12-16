@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using BeforeDawn.Core.Adapters.Abstract;
@@ -30,9 +31,43 @@ namespace BeforeDawn.Core.Game
 
         public void LoadContent(ISpriteBatchAdapter spriteBatch)
         {
-            _numberOfLevels = 1;
+            _numberOfLevels = FindNumberOfLevels();
 
-            LoadNextLevel();
+            if (_levelIndex < _numberOfLevels)
+            {
+                LoadNextLevel();    
+            }
+            else if (_levelIndex == _numberOfLevels)
+            {
+                CompleteGame();
+            }
+        }
+
+        private void CompleteGame()
+        {
+            Debug.WriteLine("Game completed!");
+        }
+
+        private int FindNumberOfLevels()
+        {
+            int count = 0;
+
+            try
+            {
+                var levelIndex = 1;
+                while (true)
+                {
+                    using (var stream = _titleContainer.OpenStream("Content/Levels/level" + levelIndex + ".txt"))
+                    {
+                        count++;
+                    }
+                    levelIndex++;
+                }
+            }
+            catch (Exception ex)
+            {
+                return count;
+            }
         }
 
         private void LoadNextLevel()
@@ -49,12 +84,24 @@ namespace BeforeDawn.Core.Game
                 using (var stream = _titleContainer.OpenStream("Content/Levels/level" + _levelIndex + ".txt"))
                 {
                     _currentLevel = _ioc.Resolve<Level>();
-                    _currentLevel.Initialize(stream, _levelIndex);
+                    _currentLevel.Initialize(stream, _levelIndex, LevelCompleted);
                 }
             }
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        private void LevelCompleted()
+        {
+            if (_levelIndex < _numberOfLevels)
+            {
+                LoadNextLevel();
+            }
+            else if (_levelIndex == _numberOfLevels)
+            {
+                CompleteGame();
             }
         }
 

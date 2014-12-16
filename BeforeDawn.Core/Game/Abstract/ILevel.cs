@@ -9,7 +9,7 @@ namespace BeforeDawn.Core.Game.Abstract
     internal interface ILevel : IDisposable, IDraw
     {
         void LoadNextLevel();
-        void Initialize(IStreamAdapter stream, int levelIndex);
+        void Initialize(IStreamAdapter stream, int levelIndex, Action levelCompleted);
         void Update(GameTime gameTime, KeyboardState keyboardState);
     }
 }
