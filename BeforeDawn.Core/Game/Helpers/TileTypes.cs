@@ -1,4 +1,4 @@
-﻿namespace BeforeDawn.Core.Game
+﻿namespace BeforeDawn.Core.Game.Helpers
 {
     class TileTypes
     {

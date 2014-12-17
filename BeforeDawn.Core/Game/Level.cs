@@ -255,21 +255,16 @@ namespace BeforeDawn.Core.Game
             var endTile = _levelState.GetEndTile();
             if (_levelState.Player.Boundaries.Intersects(endTile.Boundaries))
             {
-                GameOver();
+                if (_levelCompleted != null)
+                {
+                    _levelCompleted();
+                }
             }
             else
             {
                 _levelState.Player.Update(gameTime, keyboardState);
 
                 _levelState.Collectables.ForEach(c => c.Update(gameTime, keyboardState));
-            }
-        }
-
-        private void GameOver()
-        {
-            if (_levelCompleted != null)
-            {
-                _levelCompleted();
             }
         }
     }

@@ -64,13 +64,13 @@
     <Compile Include="Game\Helpers\TileExtensions.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
     <Compile Include="Game\Helpers\TilePlacement.cs" />
+    <Compile Include="Game\Helpers\TileTypes.cs" />
     <Compile Include="Game\Level.cs" />
     <Compile Include="Game\LevelState.cs" />
     <Compile Include="Game\Messages\ItemCollected.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Sprite.cs" />
     <Compile Include="Game\Tile.cs" />
-    <Compile Include="Game\TileTypes.cs" />
     <Compile Include="Infrastructure\IIoC.cs" />
     <Compile Include="Infrastructure\IoC.cs" />
     <Compile Include="Infrastructure\Message.cs" />

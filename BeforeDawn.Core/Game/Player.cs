@@ -23,6 +23,7 @@ namespace BeforeDawn.Core.Game
         private const float VelocityY = 50;
         private const int MovementSpeed = 250;
         private int _aggregatedGameTime;
+        private bool _bypassMovementSpeedLimit = false;
 
         public Player(IContentManagerAdapter contentManager, ILevelState levelState)
         {
@@ -41,32 +42,46 @@ namespace BeforeDawn.Core.Game
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
             _aggregatedGameTime += gameTime.ElapsedGameTime.Milliseconds;
-            
-            if (_aggregatedGameTime > MovementSpeed)
+
+            if (keyboardState.GetPressedKeys().Count() == 0)
+            {
+                _bypassMovementSpeedLimit = true;
+            }
+
+            if (_bypassMovementSpeedLimit || _aggregatedGameTime > MovementSpeed)
             {
                 if (keyboardState.IsKeyDown(Keys.W))
                 {
                     FaceUp();
                     TryMoveUp();
+                    RestrictMovementSpeed();
                 }
                 else if (keyboardState.IsKeyDown(Keys.A))
                 {
                     FaceLeft();
                     TryMoveLeft();
+                    RestrictMovementSpeed();
                 }
                 else if (keyboardState.IsKeyDown(Keys.S))
                 {
                     FaceDown();
                     TryMoveDown();
+                    RestrictMovementSpeed();
                 }
                 else if (keyboardState.IsKeyDown(Keys.D))
                 {
                     FaceRight();
                     TryMoveRight();
+                    RestrictMovementSpeed();
                 }
 
                 _aggregatedGameTime = 0;
             }
+        }
+
+        private void RestrictMovementSpeed()
+        {
+            _bypassMovementSpeedLimit = false;
         }
 
         private void TryMoveRight()
