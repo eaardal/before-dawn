@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Exceptions;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
+using BeforeDawn.Core.Game.Messages;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -19,26 +21,27 @@ namespace BeforeDawn.Core.Game
 {
     class Level : ILevel
     {
+        private Rectangle _boundaries;
         private int _levelIndex;
         private readonly IServiceProvider _serviceProvider;
         private readonly IIoC _ioc;
         private TimeSpan _timeRemaining;
         private readonly List<Texture2D> _textureLayers;
-        private readonly List<ITile> _tiles;
         private readonly IStreamReaderAdapter _streamReader;
         private readonly ITimeSpanAdapter _timeSpan;
-        private Player _player;
+        private readonly ILevelState _levelState;
         private Action _levelCompleted;
 
         public IContentManagerAdapter Content { get; private set; }
 
-        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider, IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan)
+        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider, IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan, ILevelState levelState)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
             if (ioc == null) throw new ArgumentNullException("ioc");
             if (streamReader == null) throw new ArgumentNullException("streamReader");
             if (timeSpan == null) throw new ArgumentNullException("timeSpan");
+            if (levelState == null) throw new ArgumentNullException("levelState");
 
             contentManager.Create(serviceProvider, "Content");
             Content = contentManager;
@@ -46,43 +49,66 @@ namespace BeforeDawn.Core.Game
             _ioc = ioc;
             _streamReader = streamReader;
             _timeSpan = timeSpan;
+            _levelState = levelState;
 
             _textureLayers = new List<Texture2D>();
-            _tiles = new List<ITile>();
+
+            Message.Subscribe<ItemCollected>(OnItemCollected);
         }
         
         public void Initialize(IStreamAdapter levelLayoutStream, int levelIndex, Action levelCompleted)
         {
+            _levelState.ResetAllState();
+
             _levelIndex = levelIndex;
             _timeRemaining = _timeSpan.FromMinutes(2.0);
             _levelCompleted = levelCompleted;
 
             LoadTiles(levelLayoutStream);
 
+            SetLevelBoundaries();
+
             SpawnPlayer();
+        }
+
+        private void SetLevelBoundaries()
+        {
+            var firstRow = _levelState.Tiles.AsLayout().GetLayoutRow(1).ToList();
+            var firstCol = _levelState.Tiles.AsLayout().GetLayoutColumn(1).ToList();
+
+            var width = firstRow.Sum(tile => tile.Boundaries.Width);
+            var height = firstCol.Sum(tile => tile.Boundaries.Height);
+            _boundaries = new Rectangle(0, 0, width, height);
         }
 
         private void SpawnPlayer()
         {
-            _player = _ioc.Resolve<Player>();
+            _levelState.Player = _ioc.Resolve<Player>();
 
-            var startTile = _tiles.Single(tile => tile.IsStartTile);
+            var startTile = _levelState.Tiles.Single(tile => tile.IsStartTile);
 
-            _player.Initialize(startTile.Location);
+            _levelState.Player.Initialize(startTile.Location);
         }
 
         private void LoadTiles(IStreamAdapter fileStream)
         {
             var lines = ReadLines(fileStream);
 
-            var matches = ExtractTiles(lines.ToList());
+            var matches = ExtractTiles(lines.ToList()).ToList();
 
-            _tiles.AddRange(matches.Select(match =>
+            _levelState.Tiles.AddRange(matches.Select(match =>
             {
                 var tile = _ioc.Resolve<ITile>();
                 tile.Initialize(match);
                 return tile;
             }));
+
+            _levelState.Collectables.AddRange(matches.Where(match => match.TileType == TileTypes.Collectable).Select(match =>
+                {
+                    var collectable = _ioc.Resolve<ICollectable>();
+                    collectable.Initialize(match);
+                    return collectable;
+                }));
 
             EnsureHasStartPosition();
             EnsureHasOnlyOneStartPosition();
@@ -90,10 +116,10 @@ namespace BeforeDawn.Core.Game
             EnsureHasEndPosition();
             EnsureHasOnlyOneEndPosition();
         }
-
+        
         private void EnsureHasOnlyOneStartPosition()
         {
-            var nrOfTiles = _tiles.Count(tile => tile.IsStartTile);
+            var nrOfTiles = _levelState.Tiles.Count(tile => tile.IsStartTile);
             if (nrOfTiles > 1)
             {
                 throw new RequiredGameElementMissingException("Level " + _levelIndex + " has too many start positions (" + nrOfTiles + "). Can only have one.");
@@ -102,7 +128,7 @@ namespace BeforeDawn.Core.Game
 
         private void EnsureHasOnlyOneEndPosition()
         {
-            var nrOfTiles = _tiles.Count(tile => tile.IsEndTile);
+            var nrOfTiles = _levelState.Tiles.Count(tile => tile.IsEndTile);
             if (nrOfTiles > 1)
             {
                 throw new RequiredGameElementMissingException("Level " + _levelIndex + " has too many end positions (" + nrOfTiles + "). Can only have one.");
@@ -111,7 +137,7 @@ namespace BeforeDawn.Core.Game
 
         private void EnsureHasStartPosition()
         {
-            var hasTile = _tiles.Any(tile => tile.IsStartTile);
+            var hasTile = _levelState.Tiles.Any(tile => tile.IsStartTile);
             if (!hasTile)
             {
                 throw new RequiredGameElementMissingException("Missing start position tile");
@@ -120,7 +146,7 @@ namespace BeforeDawn.Core.Game
 
         private void EnsureHasEndPosition()
         {
-            var hasTile = _tiles.Any(tile => tile.IsEndTile);
+            var hasTile = _levelState.Tiles.Any(tile => tile.IsEndTile);
             if (!hasTile)
             {
                 throw new RequiredGameElementMissingException("Missing end position tile");
@@ -138,7 +164,7 @@ namespace BeforeDawn.Core.Game
             {
                 yCounter++;
 
-                var matches = new Regex("([a-zA-Z0-9])+").Matches(lines[i]);
+                var matches = new Regex(@"([a-zA-Z0-9\$])+").Matches(lines[i]);
 
                 for (var j = 0; j < matches.Count; j++)
                 {
@@ -150,7 +176,7 @@ namespace BeforeDawn.Core.Game
                     {
                         continue;
                     }
-                    
+
                     tiles.Add(new TileMatch
                     {
                         TileType = match.Value,
@@ -186,35 +212,56 @@ namespace BeforeDawn.Core.Game
             }
 
             return lines;
-        } 
+        }
+        
+        private void OnItemCollected(ItemCollected item)
+        {
+            UpdateRemainingCollectableCount();
+
+            if (_levelState.Collectables.All(c => c.IsCollected))
+            {
+                var endTile = _levelState.GetEndTile();
+                endTile.Collision = TileCollision.Passable;   
+            }
+        }
+
+        private void UpdateRemainingCollectableCount()
+        {
+            var remaining = _levelState.Collectables.Count(c => !c.IsCollected);
+            Debug.WriteLine("Remaining items: " + remaining);
+        }
 
         public void LoadNextLevel()
         {
-            _levelIndex++;    
+            _levelIndex++;
         }
 
         public void Dispose()
         {
-            
+
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            _tiles.ForEach(tile => tile.Draw(gameTime, spriteBatch));
+            _levelState.Tiles.ForEach(tile => tile.Draw(gameTime, spriteBatch));
 
-            _player.Draw(gameTime, spriteBatch);
+            _levelState.Collectables.ForEach(c => c.Draw(gameTime, spriteBatch));
+
+            _levelState.Player.Draw(gameTime, spriteBatch);
         }
 
         public void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            var endTile = GetEndTile();
-            if (_player.Boundaries.Intersects(endTile.Boundaries))
+            var endTile = _levelState.GetEndTile();
+            if (_levelState.Player.Boundaries.Intersects(endTile.Boundaries))
             {
                 GameOver();
             }
             else
             {
-                _player.Update(gameTime, keyboardState);    
+                _levelState.Player.Update(gameTime, keyboardState);
+
+                _levelState.Collectables.ForEach(c => c.Update(gameTime, keyboardState));
             }
         }
 
@@ -224,16 +271,6 @@ namespace BeforeDawn.Core.Game
             {
                 _levelCompleted();
             }
-        }
-
-        private ITile GetStartTile()
-        {
-            return _tiles.Single(tile => tile.IsStartTile);
-        }
-
-        private ITile GetEndTile()
-        {
-            return _tiles.Single(tile => tile.IsEndTile);
         }
     }
 }

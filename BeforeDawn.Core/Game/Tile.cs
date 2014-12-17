@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
@@ -40,8 +37,11 @@ namespace BeforeDawn.Core.Game
         public int TileLayoutX { get; set; }
         public int TileLayoutY { get; set; }
         public TileCollision Collision { get; set; }
-        public bool IsStartTile { get { return TileType == "S"; } }
-        public bool IsEndTile { get { return TileType == "E"; } }
+        public bool IsDefaultTile { get { return TileType == TileTypes.Default; }}
+        public bool IsStartTile { get { return TileType == TileTypes.Start; } }
+        public bool IsEndTile { get { return TileType == TileTypes.End; } }
+        public bool IsBlockTile { get { return TileType == TileTypes.Block; }}
+        public bool HasCollectable { get { return TileType == TileTypes.Collectable; } }
 
         public Tile(IContentManagerAdapter contentManager)
         {
@@ -64,31 +64,46 @@ namespace BeforeDawn.Core.Game
 
         private void LoadTile()
         {
-            if (TileType == "0")
+            if (TileType == TileTypes.Default)
             {
                 LoadDefaultTile();
             }
-            else if (TileType == "S")
+            else if (TileType == TileTypes.Start)
             {
                 LoadDefaultTile();
             }
-            else if (TileType == "E")
+            else if (TileType == TileTypes.End)
             {
                 LoadExitTile();
             }
+            else if (TileType == TileTypes.Block)
+            {
+                LoadBlockTile();
+            }
+            else if (TileType == TileTypes.Collectable)
+            {
+                LoadDefaultTile();
+            }
+        }
+
+        private void LoadBlockTile()
+        {
+            var texture = LoadTexture("Tile_Block");
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture));
+            Collision = TileCollision.Impassable;
         }
 
         private void LoadExitTile()
         {
             var texture = LoadTexture("Tile_Exit");
-            SetDefaultValues(texture, CalculateLocationForTilLayout(texture));
-            Collision = TileCollision.Passable;
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture));
+            Collision = TileCollision.Impassable;
         }
 
         private void LoadDefaultTile()
         {
             var texture = LoadTexture("Tile_Default");
-            SetDefaultValues(texture, CalculateLocationForTilLayout(texture));
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture));
             Collision = TileCollision.Passable;
         }
 
@@ -97,11 +112,6 @@ namespace BeforeDawn.Core.Game
             return _contentManager.Load<Texture2D>("Tiles/" + assetName);
         }
         
-        private Vector2 CalculateLocationForTilLayout(Texture2D texture)
-        {
-            var x = (TileLayoutX - 1) * texture.Width;
-            var y = (TileLayoutY - 1) * texture.Height;    
-            return new Vector2(x, y);
-        }
+        
     }
 }

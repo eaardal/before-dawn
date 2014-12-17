@@ -9,5 +9,11 @@ namespace BeforeDawn.Core.Game.Abstract
         string TileType { get; }
         bool IsStartTile { get; }
         bool IsEndTile { get; }
+        int TileLayoutX { get; set; }
+        int TileLayoutY { get; set; }
+        bool IsBlockTile { get; }
+        bool IsDefaultTile { get; }
+        bool HasCollectable { get; }
+        TileCollision Collision { get; set; }
     }
 }

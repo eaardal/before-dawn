@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using BeforeDawn.Core.Adapters.Abstract;
+using BeforeDawn.Core.Game.Abstract;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,6 +12,7 @@ namespace BeforeDawn.Core.Game
     class Player : Sprite
     {
         private readonly IContentManagerAdapter _contentManager;
+        private readonly ILevelState _levelState;
         private const int Height = 50;
         private const int Width = 50;
         private readonly Rectangle _facingNorthTextureOffset;
@@ -18,13 +21,16 @@ namespace BeforeDawn.Core.Game
         private readonly Rectangle _facingEastTextureOffset;
         private const float VelocityX = 50;
         private const float VelocityY = 50;
-        private const int MovementSpeed = 350;
+        private const int MovementSpeed = 250;
         private int _aggregatedGameTime;
 
-        public Player(IContentManagerAdapter contentManager)
+        public Player(IContentManagerAdapter contentManager, ILevelState levelState)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
+            if (levelState == null) throw new ArgumentNullException("levelState");
+
             _contentManager = contentManager;
+            _levelState = levelState;
 
             _facingNorthTextureOffset = new Rectangle(0, 0, Width, Height);
             _facingWestTextureOffset = new Rectangle(50, 0, Width, Height);
@@ -40,52 +46,86 @@ namespace BeforeDawn.Core.Game
             {
                 if (keyboardState.IsKeyDown(Keys.W))
                 {
-                    FaceNorth();
-
-                    Location = new Vector2(Location.X, Location.Y - VelocityY);
+                    FaceUp();
+                    TryMoveUp();
                 }
                 else if (keyboardState.IsKeyDown(Keys.A))
                 {
-                    FaceWest();
-
-                    Location = new Vector2(Location.X - VelocityX, Location.Y);
+                    FaceLeft();
+                    TryMoveLeft();
                 }
                 else if (keyboardState.IsKeyDown(Keys.S))
                 {
-                    FaceSouth();
-
-                    Location = new Vector2(Location.X, Location.Y + VelocityY);
+                    FaceDown();
+                    TryMoveDown();
                 }
                 else if (keyboardState.IsKeyDown(Keys.D))
                 {
-                    FaceEast();
-
-                    Location = new Vector2(Location.X + VelocityX, Location.Y);
+                    FaceRight();
+                    TryMoveRight();
                 }
 
                 _aggregatedGameTime = 0;
             }
         }
 
-        private void FaceEast()
+        private void TryMoveRight()
+        {
+            TryMoveToLocation(new Vector2(Location.X + VelocityX, Location.Y));
+        }
+
+        private void TryMoveDown()
+        {
+            TryMoveToLocation(new Vector2(Location.X, Location.Y + VelocityY));
+        }
+
+        private void TryMoveLeft()
+        {
+            TryMoveToLocation(new Vector2(Location.X - VelocityX, Location.Y));
+        }
+
+        private void TryMoveUp()
+        {
+            TryMoveToLocation(new Vector2(Location.X, Location.Y - VelocityY));
+        }
+
+        private void TryMoveToLocation(Vector2 location)
+        {
+            if (CanMoveTo(location))
+            {
+                Location = location;
+            }
+        }
+
+        private bool CanMoveTo(Vector2 location)
+        {
+            return CanMoveTo(new Rectangle((int) location.X, (int) location.Y, Boundaries.Width, Boundaries.Height));
+        }
+
+        private bool CanMoveTo(Rectangle location)
+        {
+            return !_levelState.Tiles.Where(tile => tile.IsBlockTile || tile.Collision == TileCollision.Impassable).Any(tile => tile.Boundaries.Intersects(location));
+        }
+
+        private void FaceRight()
         {
             SourceRectangle = new Rectangle(_facingEastTextureOffset.X, _facingEastTextureOffset.Y,
                 _facingEastTextureOffset.Width, _facingEastTextureOffset.Height);
         }
 
-        private void FaceSouth()
+        private void FaceDown()
         {
             SourceRectangle = new Rectangle(_facingSouthTextureOffset.X, _facingSouthTextureOffset.Y,
                 _facingSouthTextureOffset.Width, _facingSouthTextureOffset.Height);
         }
 
-        private void FaceWest()
+        private void FaceLeft()
         {
             SourceRectangle = new Rectangle(_facingWestTextureOffset.X, _facingWestTextureOffset.Y,
                 _facingWestTextureOffset.Width, _facingWestTextureOffset.Height);
         }
 
-        private void FaceNorth()
+        private void FaceUp()
         {
             SourceRectangle = new Rectangle(_facingNorthTextureOffset.X, _facingNorthTextureOffset.Y,
                 _facingNorthTextureOffset.Width, _facingNorthTextureOffset.Height);
@@ -99,8 +139,8 @@ namespace BeforeDawn.Core.Game
         public Player Initialize(Vector2 location)
         {
             var texture = _contentManager.Load<Texture2D>("Player\\Player");
-            SetDefaultValues(texture, location);
-            FaceEast();
+            SetDefaultValues(texture, location, new Rectangle((int)location.X, (int)location.Y, Width, Height));
+            FaceRight();
             return this;
         }
 

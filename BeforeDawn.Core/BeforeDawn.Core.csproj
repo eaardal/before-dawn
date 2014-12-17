@@ -49,22 +49,31 @@
     <Compile Include="Adapters\TitleContainerAdapter.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Exceptions\RequiredGameElementMissingException.cs" />
+    <Compile Include="Game\Abstract\ICollectable.cs" />
     <Compile Include="Game\Abstract\IDraw.cs" />
     <Compile Include="Game\Abstract\ILevel.cs" />
+    <Compile Include="Game\Abstract\ILevelState.cs" />
     <Compile Include="Game\Abstract\ILoadContent.cs" />
     <Compile Include="Game\Abstract\ISprite.cs" />
     <Compile Include="Game\Abstract\ITile.cs" />
     <Compile Include="Game\Abstract\IUpdate.cs" />
     <Compile Include="Game\Builders\PlayerBuilder.cs" />
+    <Compile Include="Game\Collectable.cs" />
     <Compile Include="Game\GameEngine.cs" />
     <Compile Include="Game\GameLoop.cs" />
+    <Compile Include="Game\Helpers\TileExtensions.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
+    <Compile Include="Game\Helpers\TilePlacement.cs" />
     <Compile Include="Game\Level.cs" />
+    <Compile Include="Game\LevelState.cs" />
+    <Compile Include="Game\Messages\ItemCollected.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Sprite.cs" />
     <Compile Include="Game\Tile.cs" />
+    <Compile Include="Game\TileTypes.cs" />
     <Compile Include="Infrastructure\IIoC.cs" />
     <Compile Include="Infrastructure\IoC.cs" />
+    <Compile Include="Infrastructure\Message.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -79,10 +88,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Items\Item_Collectable.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Levels\level-syntax-readme.txt" />
     <Content Include="Content\Levels\level1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Player\Player.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Tiles\Tile_Block.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Tiles\Tile_Default.png">

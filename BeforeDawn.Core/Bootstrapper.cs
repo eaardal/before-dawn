@@ -2,6 +2,7 @@
 using System.Reflection;
 using Autofac;
 using BeforeDawn.Core.Game;
+using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Infrastructure;
 
 namespace BeforeDawn.Core
@@ -13,7 +14,7 @@ namespace BeforeDawn.Core
             var builder = new ContainerBuilder();
 
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Except<IIoC>()
+                .Except<IIoC>().Except<ILevelState>()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
@@ -24,6 +25,8 @@ namespace BeforeDawn.Core
                 .SingleInstance();
 
             builder.Register<IIoC>(i => new IoC()).SingleInstance();
+
+            builder.Register<ILevelState>(p => new LevelState()).SingleInstance();
 
             builder.Register<IServiceProvider>(p => game.Services);
             
