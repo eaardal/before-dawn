@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 
 namespace BeforeDawn.Core.Infrastructure
 {
@@ -6,5 +7,7 @@ namespace BeforeDawn.Core.Infrastructure
     {
         void RegisterContainer(IContainer container);
         T Resolve<T>();
+        T Resolve<T>(T type);
+        T Resolve<T>(string name);
     }
 }

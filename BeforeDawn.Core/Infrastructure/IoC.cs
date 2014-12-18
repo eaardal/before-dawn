@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 
 namespace BeforeDawn.Core.Infrastructure
 {
@@ -14,6 +15,16 @@ namespace BeforeDawn.Core.Infrastructure
         public T Resolve<T>()
         {
             return _container.Resolve<T>();
+        }
+
+        public T Resolve<T>(T type)
+        {
+            return (T)_container.Resolve(typeof (T));
+        }
+
+        public T Resolve<T>(string name)
+        {
+            return _container.ResolveNamed<T>(name);
         }
     }
 }

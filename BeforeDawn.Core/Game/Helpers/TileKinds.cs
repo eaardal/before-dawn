@@ -1,6 +1,6 @@
 ﻿namespace BeforeDawn.Core.Game.Helpers
 {
-    class TileTypes
+    class TileKinds
     {
         public static readonly string Default = "0";
         public static readonly string Start = "S";
@@ -8,4 +8,5 @@
         public static readonly string Block = "B";
         public static readonly string Collectable = "$";
     }
+
 }

@@ -61,16 +61,21 @@
     <Compile Include="Game\Collectable.cs" />
     <Compile Include="Game\GameEngine.cs" />
     <Compile Include="Game\GameLoop.cs" />
+    <Compile Include="Game\Helpers\TileCollision.cs" />
     <Compile Include="Game\Helpers\TileExtensions.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
     <Compile Include="Game\Helpers\TilePlacement.cs" />
-    <Compile Include="Game\Helpers\TileTypes.cs" />
+    <Compile Include="Game\Helpers\TileKinds.cs" />
     <Compile Include="Game\Level.cs" />
     <Compile Include="Game\LevelState.cs" />
     <Compile Include="Game\Messages\ItemCollected.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Sprite.cs" />
-    <Compile Include="Game\Tile.cs" />
+    <Compile Include="Game\Tiles\BlockTile.cs" />
+    <Compile Include="Game\Tiles\DefaultTile.cs" />
+    <Compile Include="Game\Tiles\EndTile.cs" />
+    <Compile Include="Game\Tiles\StartTile.cs" />
+    <Compile Include="Game\Tiles\Tile.cs" />
     <Compile Include="Infrastructure\IIoC.cs" />
     <Compile Include="Infrastructure\IoC.cs" />
     <Compile Include="Infrastructure\Message.cs" />
@@ -95,6 +100,12 @@
     <Content Include="Content\Levels\level1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Levels\level2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Levels\level3.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Player\Player.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -105,6 +116,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Tiles\Tile_Exit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Tiles\Tile_Exit_Closed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />

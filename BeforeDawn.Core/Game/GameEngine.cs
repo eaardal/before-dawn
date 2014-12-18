@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using BeforeDawn.Core.Adapters.Abstract;
@@ -57,7 +58,7 @@ namespace BeforeDawn.Core.Game
                 var levelIndex = 1;
                 while (true)
                 {
-                    using (var stream = _titleContainer.OpenStream("Content/Levels/level" + levelIndex + ".txt"))
+                    using (var stream = GetLevel(levelIndex))
                     {
                         count++;
                     }
@@ -68,6 +69,14 @@ namespace BeforeDawn.Core.Game
             {
                 return count;
             }
+        }
+
+        private IStreamAdapter GetLevel(int index)
+        {
+            var exeLocation = System.Reflection.Assembly.GetEntryAssembly().Location;
+            var location = exeLocation.Substring(0, exeLocation.LastIndexOf("\\", StringComparison.Ordinal));
+            var levelPath = String.Format("{0}\\Content\\Levels\\level{1}.txt", location, index);
+            return _ioc.Resolve<IStreamAdapter>().WithStream(new FileStream(levelPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
         }
 
         private void LoadNextLevel()
@@ -81,7 +90,7 @@ namespace BeforeDawn.Core.Game
 
             try
             {
-                using (var stream = _titleContainer.OpenStream("Content/Levels/level" + _levelIndex + ".txt"))
+                using (var stream = GetLevel(_levelIndex))
                 {
                     _currentLevel = _ioc.Resolve<Level>();
                     _currentLevel.Initialize(stream, _levelIndex, LevelCompleted);
@@ -89,6 +98,7 @@ namespace BeforeDawn.Core.Game
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 throw;
             }
         }

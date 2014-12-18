@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Autofac;
+using Autofac.Builder;
 using BeforeDawn.Core.Game;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Infrastructure;
@@ -16,6 +18,7 @@ namespace BeforeDawn.Core
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Except<IIoC>().Except<ILevelState>()
                 .AsSelf()
+                .Named<ITile>(t => t.FullName)
                 .AsImplementedInterfaces();
 
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())

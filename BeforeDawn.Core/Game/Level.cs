@@ -10,6 +10,7 @@ using BeforeDawn.Core.Exceptions;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
 using BeforeDawn.Core.Game.Messages;
+using BeforeDawn.Core.Game.Tiles;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -30,11 +31,14 @@ namespace BeforeDawn.Core.Game
         private readonly IStreamReaderAdapter _streamReader;
         private readonly ITimeSpanAdapter _timeSpan;
         private readonly ILevelState _levelState;
+        private readonly IEnumerable<ITile> _tileDefinitions;
         private Action _levelCompleted;
 
         public IContentManagerAdapter Content { get; private set; }
 
-        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider, IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan, ILevelState levelState)
+        public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider,
+            IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan,
+            ILevelState levelState, IEnumerable<ITile> tileDefinitions)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
@@ -42,6 +46,7 @@ namespace BeforeDawn.Core.Game
             if (streamReader == null) throw new ArgumentNullException("streamReader");
             if (timeSpan == null) throw new ArgumentNullException("timeSpan");
             if (levelState == null) throw new ArgumentNullException("levelState");
+            if (tileDefinitions == null) throw new ArgumentNullException("tileDefinitions");
 
             contentManager.Create(serviceProvider, "Content");
             Content = contentManager;
@@ -50,12 +55,13 @@ namespace BeforeDawn.Core.Game
             _streamReader = streamReader;
             _timeSpan = timeSpan;
             _levelState = levelState;
+            _tileDefinitions = tileDefinitions;
 
             _textureLayers = new List<Texture2D>();
 
             Message.Subscribe<ItemCollected>(OnItemCollected);
         }
-        
+
         public void Initialize(IStreamAdapter levelLayoutStream, int levelIndex, Action levelCompleted)
         {
             _levelState.ResetAllState();
@@ -96,19 +102,29 @@ namespace BeforeDawn.Core.Game
 
             var matches = ExtractTiles(lines.ToList()).ToList();
 
-            _levelState.Tiles.AddRange(matches.Select(match =>
+            foreach (var match in matches)
             {
-                var tile = _ioc.Resolve<ITile>();
-                tile.Initialize(match);
-                return tile;
-            }));
-
-            _levelState.Collectables.AddRange(matches.Where(match => match.TileType == TileTypes.Collectable).Select(match =>
+                var tileDef = _tileDefinitions.SingleOrDefault(t => t.TileTypes.Contains(match.TileType));
+                if (tileDef != null)
                 {
-                    var collectable = _ioc.Resolve<ICollectable>();
-                    collectable.Initialize(match);
-                    return collectable;
-                }));
+                    var tile = _ioc.Resolve<ITile>(tileDef.GetType().FullName);
+                    tile.Initialize(match);
+
+                    _levelState.Tiles.Add(tile);
+
+                    if (match.TileType == TileKinds.Collectable)
+                    {
+                        var collectable = _ioc.Resolve<ICollectable>();
+                        collectable.Initialize(match);
+
+                        _levelState.Collectables.Add(collectable);
+                    }
+                }
+                else
+                {
+                    throw new RequiredGameElementMissingException("Tile for " + match.TileType + " tile type missing");
+                }
+            }
 
             EnsureHasStartPosition();
             EnsureHasOnlyOneStartPosition();
@@ -116,7 +132,7 @@ namespace BeforeDawn.Core.Game
             EnsureHasEndPosition();
             EnsureHasOnlyOneEndPosition();
         }
-        
+
         private void EnsureHasOnlyOneStartPosition()
         {
             var nrOfTiles = _levelState.Tiles.Count(tile => tile.IsStartTile);
@@ -193,27 +209,20 @@ namespace BeforeDawn.Core.Game
 
         private IEnumerable<string> ReadLines(IStreamAdapter fileStream)
         {
-            int width;
             var lines = new List<string>();
 
             using (var reader = _streamReader.ReadStream(fileStream))
             {
-                var line = reader.ReadLine();
-
-                width = line.Length;
-
-                while (line != null)
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
                     lines.Add(line);
-                    if (line.Length != width)
-                        throw new Exception(String.Format("The length of line {0} is different from all preceeding lines.", lines.Count));
-                    line = reader.ReadLine();
                 }
             }
 
             return lines;
         }
-        
+
         private void OnItemCollected(ItemCollected item)
         {
             UpdateRemainingCollectableCount();
@@ -221,7 +230,7 @@ namespace BeforeDawn.Core.Game
             if (_levelState.Collectables.All(c => c.IsCollected))
             {
                 var endTile = _levelState.GetEndTile();
-                endTile.Collision = TileCollision.Passable;   
+                endTile.Collision = TileCollision.Passable;
             }
         }
 

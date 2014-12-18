@@ -1,4 +1,6 @@
-﻿using BeforeDawn.Core.Game.Helpers;
+﻿using System.Collections.Generic;
+using BeforeDawn.Core.Game.Helpers;
+using BeforeDawn.Core.Game.Tiles;
 using Microsoft.Xna.Framework;
 
 namespace BeforeDawn.Core.Game.Abstract
@@ -6,7 +8,7 @@ namespace BeforeDawn.Core.Game.Abstract
     internal interface ITile : ISprite
     {
         void Initialize(TileMatch match);
-        string TileType { get; }
+        List<string> TileTypes { get; }
         bool IsStartTile { get; }
         bool IsEndTile { get; }
         int TileLayoutX { get; set; }

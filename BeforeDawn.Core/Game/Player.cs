@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
+using BeforeDawn.Core.Game.Helpers;
+using BeforeDawn.Core.Game.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
