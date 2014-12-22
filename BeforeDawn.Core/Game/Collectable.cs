@@ -14,16 +14,19 @@ namespace BeforeDawn.Core.Game
     {
         private readonly IContentManagerAdapter _contentManager;
         private readonly ILevelState _levelState;
+        private readonly IMessageBus _messageBus;
 
         public bool IsCollected { get; private set; }
 
-        public Collectable(IContentManagerAdapter contentManager, ILevelState levelState)
+        public Collectable(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (levelState == null) throw new ArgumentNullException("levelState");
+            if (messageBus == null) throw new ArgumentNullException("messageBus");
 
             _contentManager = contentManager;
             _levelState = levelState;
+            _messageBus = messageBus;
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
@@ -48,7 +51,7 @@ namespace BeforeDawn.Core.Game
         {
             IsCollected = true;
 
-            Message.Publish(new ItemCollected(this));
+            _messageBus.Publish(new ItemCollected(this));
         }
 
         public void Initialize(TileMatch match)

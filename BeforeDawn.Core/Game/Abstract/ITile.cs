@@ -18,5 +18,6 @@ namespace BeforeDawn.Core.Game.Abstract
         bool HasCollectable { get; }
         bool IsConveyorBeltTile { get; }
         TileCollision Collision { get; set; }
+        bool IsTeleportTile { get; }
     }
 }

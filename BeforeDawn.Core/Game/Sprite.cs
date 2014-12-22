@@ -41,7 +41,6 @@ namespace BeforeDawn.Core.Game
                 if (value.HasValue)
                 {
                     _sourceRectangle = value;
-                    //Boundaries = new Rectangle(value.Value.X, value.Value.Y, value.Value.Width, value.Value.Height);
                 }
             }
         }

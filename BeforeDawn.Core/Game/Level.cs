@@ -216,7 +216,10 @@ namespace BeforeDawn.Core.Game
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    lines.Add(line);
+                    if (!line.StartsWith("#") && !line.StartsWith("//"))
+                    {
+                        lines.Add(line);
+                    }
                 }
             }
 
@@ -271,6 +274,8 @@ namespace BeforeDawn.Core.Game
             }
             else
             {
+                _levelState.Tiles.ForEach(tile => tile.Update(gameTime, keyboardState));
+
                 _levelState.Player.Update(gameTime, keyboardState);
 
                 _levelState.Collectables.ForEach(c => c.Update(gameTime, keyboardState));

@@ -11,6 +11,7 @@
         public static readonly string ConveyorDown = "C2";
         public static readonly string ConveyorLeft = "C3";
         public static readonly string ConveyorRight = "C4";
+        public static readonly string Teleport = "T";
     }
 
 }

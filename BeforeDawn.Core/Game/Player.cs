@@ -27,6 +27,8 @@ namespace BeforeDawn.Core.Game
         private int _aggregatedGameTime;
         private bool _bypassMovementSpeedLimit = false;
 
+        public Direction Direction { get; private set; }
+
         public Player(IContentManagerAdapter contentManager, ILevelState levelState)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
@@ -147,24 +149,32 @@ namespace BeforeDawn.Core.Game
         {
             SourceRectangle = new Rectangle(_facingEastTextureOffset.X, _facingEastTextureOffset.Y,
                 _facingEastTextureOffset.Width, _facingEastTextureOffset.Height);
+
+            Direction = Direction.Right;
         }
 
         private void FaceDown()
         {
             SourceRectangle = new Rectangle(_facingSouthTextureOffset.X, _facingSouthTextureOffset.Y,
                 _facingSouthTextureOffset.Width, _facingSouthTextureOffset.Height);
+
+            Direction = Direction.Down;
         }
 
         private void FaceLeft()
         {
             SourceRectangle = new Rectangle(_facingWestTextureOffset.X, _facingWestTextureOffset.Y,
                 _facingWestTextureOffset.Width, _facingWestTextureOffset.Height);
+
+            Direction = Direction.Left;
         }
 
         private void FaceUp()
         {
             SourceRectangle = new Rectangle(_facingNorthTextureOffset.X, _facingNorthTextureOffset.Y,
                 _facingNorthTextureOffset.Width, _facingNorthTextureOffset.Height);
+
+            Direction = Direction.Up;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -184,6 +194,11 @@ namespace BeforeDawn.Core.Game
         {
             return String.Format("Texture.Bounds.X: {0}, Texture.Bounds.Y:{1}, Location.X:{2}, Location.Y:{3}",
                 Texture.Bounds.X, Texture.Bounds.Y, Location.X, Location.Y);
+        }
+
+        public void GoToTile(ITile tile)
+        {
+            TryMoveToLocation(new Vector2(tile.Location.X, tile.Location.Y));
         }
     }
 }

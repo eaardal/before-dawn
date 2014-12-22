@@ -77,10 +77,12 @@
     <Compile Include="Game\Tiles\DefaultTile.cs" />
     <Compile Include="Game\Tiles\EndTile.cs" />
     <Compile Include="Game\Tiles\StartTile.cs" />
+    <Compile Include="Game\Tiles\TeleportTile.cs" />
     <Compile Include="Game\Tiles\Tile.cs" />
     <Compile Include="Infrastructure\IIoC.cs" />
     <Compile Include="Infrastructure\IoC.cs" />
     <Compile Include="Infrastructure\Message.cs" />
+    <Compile Include="Infrastructure\MessageBus.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -17,6 +17,7 @@ namespace BeforeDawn.Core.Game.Tiles
         public int TileLayoutX { get; set; }
         public int TileLayoutY { get; set; }
         public TileCollision Collision { get; set; }
+        public bool IsTeleportTile { get { return TileTypes.Contains(TileKinds.Teleport); }}
         public bool IsDefaultTile { get { return TileTypes.Contains(TileKinds.Default); }}
         public bool IsStartTile { get { return TileTypes.Contains(TileKinds.Start); } }
         public bool IsEndTile { get { return TileTypes.Contains(TileKinds.End); } }

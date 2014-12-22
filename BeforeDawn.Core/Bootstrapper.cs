@@ -29,6 +29,8 @@ namespace BeforeDawn.Core
 
             builder.Register<IIoC>(i => new IoC()).SingleInstance();
 
+            builder.Register<IMessageBus>(i => new MessageBus()).SingleInstance();
+
             builder.Register<ILevelState>(p => new LevelState()).SingleInstance();
 
             builder.Register<IServiceProvider>(p => game.Services);
