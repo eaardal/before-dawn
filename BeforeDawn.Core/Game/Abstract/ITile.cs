@@ -16,6 +16,7 @@ namespace BeforeDawn.Core.Game.Abstract
         bool IsBlockTile { get; }
         bool IsDefaultTile { get; }
         bool HasCollectable { get; }
+        bool IsConveyorBeltTile { get; }
         TileCollision Collision { get; set; }
     }
 }

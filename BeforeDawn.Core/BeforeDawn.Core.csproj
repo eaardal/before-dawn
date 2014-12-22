@@ -61,6 +61,7 @@
     <Compile Include="Game\Collectable.cs" />
     <Compile Include="Game\GameEngine.cs" />
     <Compile Include="Game\GameLoop.cs" />
+    <Compile Include="Game\Helpers\Direction.cs" />
     <Compile Include="Game\Helpers\TileCollision.cs" />
     <Compile Include="Game\Helpers\TileExtensions.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Sprite.cs" />
     <Compile Include="Game\Tiles\BlockTile.cs" />
+    <Compile Include="Game\Tiles\ConveyorBeltTile.cs" />
     <Compile Include="Game\Tiles\DefaultTile.cs" />
     <Compile Include="Game\Tiles\EndTile.cs" />
     <Compile Include="Game\Tiles\StartTile.cs" />
@@ -110,6 +112,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Tiles\Tile_Block.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Tiles\Tile_Conveyor.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Tiles\Tile_Default.png">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
@@ -20,6 +21,7 @@ namespace BeforeDawn.Core.Game.Tiles
         public bool IsStartTile { get { return TileTypes.Contains(TileKinds.Start); } }
         public bool IsEndTile { get { return TileTypes.Contains(TileKinds.End); } }
         public bool IsBlockTile { get { return TileTypes.Contains(TileKinds.Block); } }
+        public bool IsConveyorBeltTile { get { return TileTypes.Any(t => t.StartsWith("C")); }}
         public bool HasCollectable { get { return TileTypes.Contains(TileKinds.Collectable); } }
 
         public abstract List<string> TileTypes { get; }

@@ -45,6 +45,25 @@ namespace BeforeDawn.Core.Game
         {
             _aggregatedGameTime += gameTime.ElapsedGameTime.Milliseconds;
 
+            var isOnConveyorBeltTile =
+                _levelState.Tiles.Where(tile => tile.IsConveyorBeltTile)
+                    .Any(tile => tile.Boundaries.Intersects(Boundaries));
+
+            var t = _levelState.Tiles.Where(tile => tile.Boundaries.Intersects(Boundaries));
+
+            if (isOnConveyorBeltTile)
+            {
+                var currentTile = _levelState.Tiles.Where(tile => tile.IsConveyorBeltTile).Where(tile => tile.Boundaries.Intersects(Boundaries));
+
+                foreach (var tile in currentTile.Cast<ConveyorBeltTile>())
+                {
+                    if (tile.Direction == Direction.Up)
+                    {
+                        TryMoveToLocation(new Vector2(Location.X, Location.Y - tile.ConveyorSpeed));    
+                    }    
+                }
+            }
+
             if (keyboardState.GetPressedKeys().Count() == 0)
             {
                 _bypassMovementSpeedLimit = true;
