@@ -17,6 +17,17 @@ namespace BeforeDawn.Core.Game
         {
         }
 
+        protected override void Collect()
+        {
+            if (LevelState.Collectables.Where(c => c is IValuable).All(c => c.IsCollected))
+            {
+                var endTile = LevelState.GetEndTile();
+                endTile.Collision = TileCollision.Passable;
+            }   
+
+            base.Collect();
+        }
+
         public override void Initialize(TileMatch match)
         {
             var texture = ContentManager.Load<Texture2D>("Items\\Item_Valuable");

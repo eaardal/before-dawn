@@ -2,6 +2,6 @@
 {
     internal interface IDoor : ICollectable
     {
-        
+        string Key { get; }
     }
 }

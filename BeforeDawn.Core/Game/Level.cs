@@ -151,6 +151,12 @@ namespace BeforeDawn.Core.Game
 
             EnsureHasEndPosition();
             EnsureHasOnlyOneEndPosition();
+
+            if (!_levelState.Collectables.Any(c => c is IValuable))
+            {
+                var endTile = _levelState.GetEndTile();
+                endTile.Collision = TileCollision.Passable;
+            } 
         }
 
         private void EnsureHasOnlyOneStartPosition()
@@ -248,38 +254,13 @@ namespace BeforeDawn.Core.Game
 
         private void OnItemCollected(ItemCollected message)
         {
-            if (message.Item is Valuable)
+            if (message.Item is IValuable)
             {
-                UpdateRemainingValuableCount();
-
-                if (_levelState.Collectables.Where(c => c is Valuable).All(c => c.IsCollected))
-                {
-                    var endTile = _levelState.GetEndTile();
-                    endTile.Collision = TileCollision.Passable;
-                }   
+                UpdateRemainingValuableCount();   
             }
-            else if (message.Item is DoorKey)
+            else if (message.Item is IDoorKey)
             {
-                var doorForKey =
-                    _levelState.Collectables
-                        .Where(c => c is Door)
-                        .Where(c => !String.IsNullOrEmpty(c.CollectableKind))
-                        .Cast<Door>()
-                        .FirstOrDefault(tile => tile.Key == message.Item.CollectableKind);
-
-                if (doorForKey != null)
-                {
-                    _levelState.Collectables.Remove(doorForKey);
-                    
-                    var tileForDoor = _levelState.Tiles.TileAt(doorForKey.TileLayoutX, doorForKey.TileLayoutY);
-
-                    if (tileForDoor != null)
-                    {
-                        tileForDoor.Collision = TileCollision.Passable;
-                    }
-                }
             }
-            
         }
 
         private void UpdateRemainingValuableCount()

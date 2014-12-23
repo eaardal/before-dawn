@@ -52,6 +52,7 @@
     <Compile Include="Game\Abstract\Collectable.cs" />
     <Compile Include="Game\Abstract\ICollectable.cs" />
     <Compile Include="Game\Abstract\IDoor.cs" />
+    <Compile Include="Game\Abstract\IDoorKey.cs" />
     <Compile Include="Game\Abstract\IDraw.cs" />
     <Compile Include="Game\Abstract\ILevel.cs" />
     <Compile Include="Game\Abstract\ILevelState.cs" />
