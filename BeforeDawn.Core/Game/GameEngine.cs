@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
+using BeforeDawn.Core.Game.Messages;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,14 +21,25 @@ namespace BeforeDawn.Core.Game
         private int _levelIndex;
         private int _numberOfLevels;
         private readonly ITitleContainerAdapter _titleContainer;
+        private readonly IMessageBus _messageBus;
 
-        public GameEngine(IIoC ioc, ITitleContainerAdapter titleContainer)
+        public GameEngine(IIoC ioc, ITitleContainerAdapter titleContainer, IMessageBus messageBus)
         {
             if (ioc == null) throw new ArgumentNullException("ioc");
             if (titleContainer == null) throw new ArgumentNullException("titleContainer");
+            if (messageBus == null) throw new ArgumentNullException("messageBus");
 
             _ioc = ioc;
             _titleContainer = titleContainer;
+            _messageBus = messageBus;
+
+            _messageBus.Subscribe<PlayerDied>(OnPlayerDied);
+        }
+
+        private void OnPlayerDied(PlayerDied obj)
+        {
+            Debug.WriteLine("Player died :(");
+            ReloadCurrentLevel();
         }
 
         public void LoadContent(ISpriteBatchAdapter spriteBatch)

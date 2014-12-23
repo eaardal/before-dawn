@@ -4,7 +4,9 @@ using System.Linq;
 using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
+using BeforeDawn.Core.Game.Messages;
 using BeforeDawn.Core.Game.Tiles;
+using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,6 +17,7 @@ namespace BeforeDawn.Core.Game
     {
         private readonly IContentManagerAdapter _contentManager;
         private readonly ILevelState _levelState;
+        private readonly IMessageBus _messageBus;
         private const int Height = 50;
         private const int Width = 50;
         private readonly Rectangle _facingNorthTextureOffset;
@@ -27,21 +30,25 @@ namespace BeforeDawn.Core.Game
         private int _aggregatedGameTime;
         private bool _bypassMovementSpeedLimit = false;
 
-        public DoorKey Key { get; private set; }
+        public int Health { get; private set; }
         public Direction Direction { get; private set; }
 
-        public Player(IContentManagerAdapter contentManager, ILevelState levelState)
+        public Player(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (levelState == null) throw new ArgumentNullException("levelState");
+            if (messageBus == null) throw new ArgumentNullException("messageBus");
 
             _contentManager = contentManager;
             _levelState = levelState;
+            _messageBus = messageBus;
 
             _facingNorthTextureOffset = new Rectangle(0, 0, Width, Height);
             _facingWestTextureOffset = new Rectangle(50, 0, Width, Height);
             _facingEastTextureOffset = new Rectangle(100, 0, Width, Height);
             _facingSouthTextureOffset = new Rectangle(150, 0, Width, Height);
+
+            Health = 100;
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
@@ -181,6 +188,13 @@ namespace BeforeDawn.Core.Game
         public void GoToTile(ITile tile)
         {
             TryMoveToLocation(new Vector2(tile.Location.X, tile.Location.Y));
+        }
+
+        public void Kill()
+        {
+            Health = 0;
+
+            _messageBus.Publish(new PlayerDied());
         }
     }
 }

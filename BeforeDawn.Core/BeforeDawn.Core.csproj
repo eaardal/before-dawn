@@ -54,6 +54,7 @@
     <Compile Include="Game\Abstract\IDoor.cs" />
     <Compile Include="Game\Abstract\IDoorKey.cs" />
     <Compile Include="Game\Abstract\IDraw.cs" />
+    <Compile Include="Game\Abstract\IHazard.cs" />
     <Compile Include="Game\Abstract\ILevel.cs" />
     <Compile Include="Game\Abstract\ILevelState.cs" />
     <Compile Include="Game\Abstract\ILoadContent.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Game\GameEngine.cs" />
     <Compile Include="Game\GameLoop.cs" />
     <Compile Include="Game\Helpers\Direction.cs" />
+    <Compile Include="Game\Helpers\HazardKinds.cs" />
     <Compile Include="Game\Helpers\TileCollision.cs" />
     <Compile Include="Game\Helpers\TileExtensions.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
@@ -76,11 +78,13 @@
     <Compile Include="Game\Level.cs" />
     <Compile Include="Game\LevelState.cs" />
     <Compile Include="Game\Messages\ItemCollected.cs" />
+    <Compile Include="Game\Messages\PlayerDied.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Tiles\BlockTile.cs" />
     <Compile Include="Game\Tiles\ConveyorBeltTile.cs" />
     <Compile Include="Game\Tiles\DefaultTile.cs" />
     <Compile Include="Game\Tiles\EndTile.cs" />
+    <Compile Include="Game\Tiles\HazardTile.cs" />
     <Compile Include="Game\Tiles\StartTile.cs" />
     <Compile Include="Game\Tiles\TeleportTile.cs" />
     <Compile Include="Game\Tiles\Tile.cs" />
