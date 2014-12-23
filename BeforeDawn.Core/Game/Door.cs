@@ -21,17 +21,37 @@ namespace BeforeDawn.Core.Game
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            
         }
 
         public override void Initialize(TileMatch match)
         {
-            var texture = ContentManager.Load<Texture2D>("Tiles\\Tile_Exit_Closed");
+            var texture = ContentManager.Load<Texture2D>("Door");
             SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture));
 
+            SetColor(match);
             SetKey(match);
 
             base.Initialize(match);
+        }
+
+        private void SetColor(TileMatch match)
+        {
+            if (match.TileType == TileKinds.DoorRed)
+            {
+                Color = Color.Red;
+            }
+            else if (match.TileType == TileKinds.DoorBlue)
+            {
+                Color = Color.Blue;
+            }
+            else if (match.TileType == TileKinds.DoorGreen)
+            {
+                Color = Color.Green;
+            }
+            else if (match.TileType == TileKinds.DoorYellow)
+            {
+                Color = Color.Yellow;
+            }
         }
 
         private void SetKey(TileMatch match)
@@ -42,6 +62,11 @@ namespace BeforeDawn.Core.Game
                 var number = chars[1].ToString(CultureInfo.InvariantCulture);
                 Key = TileKinds.Keys.SingleOrDefault(k => k.EndsWith(number));
             }
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            DrawWithAllSettings(spriteBatch);
         }
     }
 }

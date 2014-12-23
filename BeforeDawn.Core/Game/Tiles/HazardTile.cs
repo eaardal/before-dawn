@@ -44,9 +44,18 @@ namespace BeforeDawn.Core.Game.Tiles
 
         protected override void LoadTile()
         {
-            var texture = LoadTexture("Tile_Exit_Closed");
+            var texture = LoadTexture(GetTextureForHazard());
             SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture));
             Collision = TileCollision.Passable;
+        }
+
+        private string GetTextureForHazard()
+        {
+            if (Hazard == TileKinds.HazardFire)
+            {
+                return "Tile_Fire";
+            }
+            return "Tile_Water";
         }
 
         public override void Initialize(TileMatch tile)

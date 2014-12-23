@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-using System.Text;
 using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
-using BeforeDawn.Core.Game.Tiles;
 using BeforeDawn.Core.Infrastructure;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BeforeDawn.Core.Game
@@ -32,14 +29,33 @@ namespace BeforeDawn.Core.Game
             base.Collect();
         }
 
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            if (!IsCollected)
+                DrawWithAllSettings(spriteBatch);
+        }
+
         public override void Initialize(TileMatch match)
         {
-            var texture = ContentManager.Load<Texture2D>("Items\\Item_Collectable");
+            var texture = ContentManager.Load<Texture2D>("Items\\Item_HazardProtection");
             SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture));
 
             SetHazard(match);
+            SetColor(match);
 
             base.Initialize(match);
+        }
+
+        private void SetColor(TileMatch match)
+        {
+            if (Hazard == TileKinds.HazardFire)
+            {
+                Color = Color.Red;
+            }
+            else if (Hazard == TileKinds.HazardWater)
+            {
+                Color = Color.Blue;
+            }
         }
 
         private void SetHazard(TileMatch match)

@@ -73,7 +73,7 @@ namespace BeforeDawn.Core.Game.Tiles
 
         protected override void LoadTile()
         {
-            var texture = LoadTexture("Tile_Exit_Closed");
+            var texture = LoadTexture("Tile_Teleport");
             SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture));
             Collision = TileCollision.Passable;
         }

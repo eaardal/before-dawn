@@ -5,6 +5,7 @@ using BeforeDawn.Core.Adapters.Abstract;
 using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
 using BeforeDawn.Core.Infrastructure;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BeforeDawn.Core.Game
@@ -43,12 +44,33 @@ namespace BeforeDawn.Core.Game
 
         public override void Initialize(TileMatch match)
         {
-            var texture = ContentManager.Load<Texture2D>("Items\\Item_Collectable");
+            var texture = ContentManager.Load<Texture2D>("DoorKey");
             SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture));
 
             SetDoor(match);
+            SetColor(match);
 
             base.Initialize(match);
+        }
+
+        private void SetColor(TileMatch match)
+        {
+            if (match.TileType == TileKinds.KeyRed)
+            {
+                Color = Color.Red;
+            }
+            else if (match.TileType == TileKinds.KeyBlue)
+            {
+                Color = Color.Blue;
+            }
+            else if (match.TileType == TileKinds.KeyGreen)
+            {
+                Color = Color.Green;
+            }
+            else if (match.TileType == TileKinds.KeyYellow)
+            {
+                Color = Color.Yellow;
+            }
         }
 
         private void SetDoor(TileMatch match)
@@ -59,6 +81,12 @@ namespace BeforeDawn.Core.Game
                 var number = chars[1].ToString(CultureInfo.InvariantCulture);
                 Door = TileKinds.Doors.SingleOrDefault(k => k.EndsWith(number));
             }
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            if (!IsCollected)
+                DrawWithAllSettings(spriteBatch);
         }
     }
 }
