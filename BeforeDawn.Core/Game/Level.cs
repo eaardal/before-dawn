@@ -132,6 +132,10 @@ namespace BeforeDawn.Core.Game
                         {
                             collectable = _ioc.Resolve<IDoorKey>();
                         }
+                        else if (TileKinds.HazardProtections.Contains(match.TileType))
+                        {
+                            collectable = _ioc.Resolve<IHazardProtection>();
+                        }
 
                         if (collectable != null)
                         {

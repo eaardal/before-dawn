@@ -33,6 +33,10 @@ namespace BeforeDawn.Core.Game.Helpers
         public static readonly string HazardWater = "H2";
         public static readonly string[] Hazards = { HazardWater, HazardFire };
 
+        public static readonly string HazardProtectionFire = "P1";
+        public static readonly string HazardProtectionWater = "P2";
+        public static readonly string[] HazardProtections = {HazardProtectionFire, HazardProtectionWater};
+
         public static readonly IEnumerable<string> Collectables;
 
         static TileKinds()
@@ -41,6 +45,7 @@ namespace BeforeDawn.Core.Game.Helpers
             collectables.AddRange(Doors);
             collectables.AddRange(Keys);
             collectables.Add(Valuable);
+            collectables.AddRange(HazardProtections);
             Collectables = collectables;
         }
     }

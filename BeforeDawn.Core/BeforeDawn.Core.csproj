@@ -67,6 +67,7 @@
     <Compile Include="Game\Door.cs" />
     <Compile Include="Game\GameEngine.cs" />
     <Compile Include="Game\GameLoop.cs" />
+    <Compile Include="Game\HazardProtection.cs" />
     <Compile Include="Game\Helpers\Direction.cs" />
     <Compile Include="Game\Helpers\HazardKinds.cs" />
     <Compile Include="Game\Helpers\TileCollision.cs" />

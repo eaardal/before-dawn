@@ -34,7 +34,9 @@ namespace BeforeDawn.Core.Game.Tiles
                     TileKinds.KeyRed,
                     TileKinds.KeyBlue,
                     TileKinds.KeyGreen,
-                    TileKinds.KeyYellow
+                    TileKinds.KeyYellow,
+                    TileKinds.HazardProtectionFire,
+                    TileKinds.HazardProtectionWater
                 };
             }
         }

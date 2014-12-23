@@ -55,5 +55,10 @@ namespace BeforeDawn.Core.Game.Tiles
             IsActive = true;
             base.Initialize(tile);
         }
+
+        public void DisableHazard()
+        {
+            IsActive = false;
+        }
     }
 }

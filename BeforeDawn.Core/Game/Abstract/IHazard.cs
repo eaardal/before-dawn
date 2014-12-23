@@ -4,5 +4,6 @@ namespace BeforeDawn.Core.Game.Abstract
     {
         string Hazard { get; }
         bool IsActive { get; }
+        void DisableHazard();
     }
 }

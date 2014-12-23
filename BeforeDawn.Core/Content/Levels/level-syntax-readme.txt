@@ -3,7 +3,7 @@
 [E] ->	Level end position
 [B] ->	Blocking tile
 [$] ->	Mandatory collectable item
-[T] -> Teleport tile
+[T] ->	Teleport tile
 
 [C1] ->	Conveyor belt tile rolling UP
 [C2] ->	Conveyor belt tile rolling DOWN
@@ -14,3 +14,14 @@
 [D2] ->	Door BLUE
 [D3] ->	Door GREEN
 [D4] ->	Door YELLOW
+
+[K1] ->	Key RED
+[K2] ->	Key BLUE
+[K3] ->	Key GREEN
+[K4] ->	Key YELLOW
+
+[H1] ->	Hazard FIRE
+[H2] ->	Hazard WATER
+
+[P1] ->	Hazard protection FIRE
+[P2] ->	Hazard protection WATER
