@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BeforeDawn.Core.Adapters.Abstract;
+using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,16 +13,36 @@ namespace BeforeDawn.Core.Game.Tiles
 {
     class ConveyorBeltTile : Tile
     {
+        private readonly ILevelState _levelState;
         public Direction Direction { get; private set; }
         public int ConveyorSpeed { get { return 30; } }
 
-        public ConveyorBeltTile(IContentManagerAdapter contentManager) : base(contentManager)
+        public ConveyorBeltTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager)
         {
+            if (levelState == null) throw new ArgumentNullException("levelState");
+            _levelState = levelState;
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            
+            var isOnConveyorBeltTile =
+                _levelState.Tiles.Where(tile => tile.IsConveyorBeltTile)
+                    .Any(tile => tile.Boundaries.Intersects(Boundaries));
+
+            var t = _levelState.Tiles.Where(tile => tile.Boundaries.Intersects(Boundaries));
+
+            if (isOnConveyorBeltTile)
+            {
+                var currentTile = _levelState.Tiles.Where(tile => tile.IsConveyorBeltTile).Where(tile => tile.Boundaries.Intersects(Boundaries));
+
+                foreach (var tile in currentTile.Cast<ConveyorBeltTile>())
+                {
+                    if (tile.Direction == Direction.Up)
+                    {
+                        //TryMoveToLocation(new Vector2(Location.X, Location.Y - tile.ConveyorSpeed));
+                    }
+                }
+            }
         }
 
         public override List<string> TileTypes

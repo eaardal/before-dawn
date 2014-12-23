@@ -1,9 +1,8 @@
-﻿using BeforeDawn.Core.Game.Abstract;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace BeforeDawn.Core.Game
+namespace BeforeDawn.Core.Game.Abstract
 {
     public abstract class Sprite : ISprite, IDraw, IUpdate
     {

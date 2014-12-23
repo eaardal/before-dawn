@@ -15,8 +15,12 @@ namespace BeforeDawn.Core.Game
         
         public GameLoop() : base()
         {
-            _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            _graphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferHeight = 600,
+                PreferredBackBufferWidth = 800
+            };
         }
 
         protected override void Initialize()
@@ -24,7 +28,7 @@ namespace BeforeDawn.Core.Game
             _ioc = Bootstrapper.Wire(this);
 
             _gameEngine = _ioc.Resolve<GameEngine>();
-
+            
             base.Initialize();
         }
 

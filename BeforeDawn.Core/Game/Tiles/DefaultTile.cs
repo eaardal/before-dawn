@@ -8,7 +8,8 @@ namespace BeforeDawn.Core.Game.Tiles
 {
     class DefaultTile : Tile
     {
-        public DefaultTile(IContentManagerAdapter contentManager) : base(contentManager)
+        public DefaultTile(IContentManagerAdapter contentManager)
+            : base(contentManager)
         {
 
         }
@@ -20,7 +21,22 @@ namespace BeforeDawn.Core.Game.Tiles
 
         public override List<string> TileTypes
         {
-            get { return new List<string>{ TileKinds.Default, TileKinds.Collectable }; }
+            get
+            {
+                return new List<string>
+                {
+                    TileKinds.Default,
+                    TileKinds.Valuable,
+                    TileKinds.DoorRed,
+                    TileKinds.DoorBlue,
+                    TileKinds.DoorGreen,
+                    TileKinds.DoorYellow,
+                    TileKinds.KeyRed,
+                    TileKinds.KeyBlue,
+                    TileKinds.KeyGreen,
+                    TileKinds.KeyYellow
+                };
+            }
         }
 
         protected override void LoadTile()

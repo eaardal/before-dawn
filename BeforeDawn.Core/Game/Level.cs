@@ -32,13 +32,14 @@ namespace BeforeDawn.Core.Game
         private readonly ITimeSpanAdapter _timeSpan;
         private readonly ILevelState _levelState;
         private readonly IEnumerable<ITile> _tileDefinitions;
+        private readonly IMessageBus _messageBus;
         private Action _levelCompleted;
 
         public IContentManagerAdapter Content { get; private set; }
 
         public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider,
             IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan,
-            ILevelState levelState, IEnumerable<ITile> tileDefinitions)
+            ILevelState levelState, IEnumerable<ITile> tileDefinitions, IMessageBus messageBus)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
@@ -47,6 +48,7 @@ namespace BeforeDawn.Core.Game
             if (timeSpan == null) throw new ArgumentNullException("timeSpan");
             if (levelState == null) throw new ArgumentNullException("levelState");
             if (tileDefinitions == null) throw new ArgumentNullException("tileDefinitions");
+            if (messageBus == null) throw new ArgumentNullException("messageBus");
 
             contentManager.Create(serviceProvider, "Content");
             Content = contentManager;
@@ -56,10 +58,11 @@ namespace BeforeDawn.Core.Game
             _timeSpan = timeSpan;
             _levelState = levelState;
             _tileDefinitions = tileDefinitions;
+            _messageBus = messageBus;
 
             _textureLayers = new List<Texture2D>();
 
-            Message.Subscribe<ItemCollected>(OnItemCollected);
+            _messageBus.Subscribe<ItemCollected>(OnItemCollected);
         }
 
         public void Initialize(IStreamAdapter levelLayoutStream, int levelIndex, Action levelCompleted)
@@ -112,12 +115,29 @@ namespace BeforeDawn.Core.Game
 
                     _levelState.Tiles.Add(tile);
 
-                    if (match.TileType == TileKinds.Collectable)
+                    if (TileKinds.Collectables.Contains(match.TileType))
                     {
-                        var collectable = _ioc.Resolve<ICollectable>();
-                        collectable.Initialize(match);
+                        ICollectable collectable = null;
 
-                        _levelState.Collectables.Add(collectable);
+                        if (match.TileType == TileKinds.Valuable)
+                        {
+                            collectable = _ioc.Resolve<IValuable>();
+                        }
+                        else if (TileKinds.Doors.Contains(match.TileType))
+                        {
+                            collectable = _ioc.Resolve<IDoor>();
+                            tile.Collision = TileCollision.Impassable;
+                        }
+                        else if (TileKinds.Keys.Contains(match.TileType))
+                        {
+                            collectable = _ioc.Resolve<IDoorKey>();
+                        }
+
+                        if (collectable != null)
+                        {
+                            collectable.Initialize(match);
+                            _levelState.Collectables.Add(collectable);
+                        }
                     }
                 }
                 else
@@ -226,20 +246,45 @@ namespace BeforeDawn.Core.Game
             return lines;
         }
 
-        private void OnItemCollected(ItemCollected item)
+        private void OnItemCollected(ItemCollected message)
         {
-            UpdateRemainingCollectableCount();
-
-            if (_levelState.Collectables.All(c => c.IsCollected))
+            if (message.Item is Valuable)
             {
-                var endTile = _levelState.GetEndTile();
-                endTile.Collision = TileCollision.Passable;
+                UpdateRemainingValuableCount();
+
+                if (_levelState.Collectables.Where(c => c is Valuable).All(c => c.IsCollected))
+                {
+                    var endTile = _levelState.GetEndTile();
+                    endTile.Collision = TileCollision.Passable;
+                }   
             }
+            else if (message.Item is DoorKey)
+            {
+                var doorForKey =
+                    _levelState.Collectables
+                        .Where(c => c is Door)
+                        .Where(c => !String.IsNullOrEmpty(c.CollectableKind))
+                        .Cast<Door>()
+                        .FirstOrDefault(tile => tile.Key == message.Item.CollectableKind);
+
+                if (doorForKey != null)
+                {
+                    _levelState.Collectables.Remove(doorForKey);
+                    
+                    var tileForDoor = _levelState.Tiles.TileAt(doorForKey.TileLayoutX, doorForKey.TileLayoutY);
+
+                    if (tileForDoor != null)
+                    {
+                        tileForDoor.Collision = TileCollision.Passable;
+                    }
+                }
+            }
+            
         }
 
-        private void UpdateRemainingCollectableCount()
+        private void UpdateRemainingValuableCount()
         {
-            var remaining = _levelState.Collectables.Count(c => !c.IsCollected);
+            var remaining = _levelState.Collectables.Where(c => c is Valuable).Count(c => !c.IsCollected);
             Debug.WriteLine("Remaining items: " + remaining);
         }
 

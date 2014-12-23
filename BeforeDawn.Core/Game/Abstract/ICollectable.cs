@@ -6,5 +6,8 @@ namespace BeforeDawn.Core.Game.Abstract
     {
         void Initialize(TileMatch match);
         bool IsCollected { get; }
+        string CollectableKind { get; }
+        int TileLayoutX { get; }
+        int TileLayoutY { get; }
     }
 }

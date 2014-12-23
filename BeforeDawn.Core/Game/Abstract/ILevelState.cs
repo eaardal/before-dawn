@@ -7,6 +7,8 @@ namespace BeforeDawn.Core.Game.Abstract
         List<ITile> Tiles { get; }
         Player Player { get; set; }
         List<ICollectable> Collectables { get; }
+        List<IDoor> Doors { get; }
+        List<DoorKey> DoorKeys { get; } 
         void ResetAllState();
         ITile GetStartTile();
         ITile GetEndTile();

@@ -7,8 +7,9 @@ namespace BeforeDawn.Core.Game
     class LevelState : ILevelState
     {
         public List<ITile> Tiles { get; private set; }
-
         public List<ICollectable> Collectables { get; set; }
+        public List<IDoor> Doors { get; private set; }
+        public List<DoorKey> DoorKeys { get; private set; }
 
         public Player Player { get; set; }
 
@@ -21,6 +22,8 @@ namespace BeforeDawn.Core.Game
         {
             Tiles = new List<ITile>();
             Collectables = new List<ICollectable>();
+            Doors = new List<IDoor>();
+            DoorKeys = new List<DoorKey>();
             Player = null;
         }
 

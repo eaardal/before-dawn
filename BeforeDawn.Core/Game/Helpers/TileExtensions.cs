@@ -33,6 +33,11 @@ namespace BeforeDawn.Core.Game.Helpers
             return tiles.Select(row => row.ElementAt((rowNr - 1))).ToList();
         }
 
+        public static ITile TileAt(this IEnumerable<ITile> tiles, int tileLayoutX, int tileLayoutY)
+        {
+            return tiles.SingleOrDefault(tile => tile.TileLayoutX == tileLayoutX && tile.TileLayoutY == tileLayoutY);
+        }
+
         public static ITile GetRightNeighbourOrDefault(this ITile rootTile, IEnumerable<ITile> tiles)
         {
             return tiles.FirstOrDefault(

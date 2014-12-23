@@ -23,7 +23,8 @@ namespace BeforeDawn.Core.Game.Tiles
         public bool IsEndTile { get { return TileTypes.Contains(TileKinds.End); } }
         public bool IsBlockTile { get { return TileTypes.Contains(TileKinds.Block); } }
         public bool IsConveyorBeltTile { get { return TileTypes.Any(t => t.StartsWith("C")); }}
-        public bool HasCollectable { get { return TileTypes.Contains(TileKinds.Collectable); } }
+        public bool IsDoorTile { get { return TileTypes.Any(t => t.StartsWith("D")); } }
+        public bool HasCollectable { get { return TileTypes.Contains(TileKinds.Valuable); } }
 
         public abstract List<string> TileTypes { get; }
 
