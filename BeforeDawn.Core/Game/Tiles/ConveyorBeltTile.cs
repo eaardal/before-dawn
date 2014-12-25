@@ -42,12 +42,6 @@ namespace BeforeDawn.Core.Game.Tiles
                         .Cast<ConveyorBeltTile>()
                         .FirstOrDefault();
 
-                var test =
-                    _levelState.Tiles
-                        .Where(tile => tile.IsConveyorBeltTile)
-                        .Where(tile => tile.Boundaries.Intersects(_levelState.Player.Boundaries))
-                        .Cast<ConveyorBeltTile>().ToList();
-
                 if (currentTile == null)
                 {
                     return;
