@@ -4,12 +4,12 @@ namespace BeforeDawn.Core.Game.Helpers
 {
     class TileKinds
     {
-        public static readonly string Default = "0";
-        public static readonly string Start = "S";
-        public static readonly string End = "E";
-        public static readonly string Block = "B";
-        public static readonly string Valuable = "$";
-        public static readonly string Teleport = "T";
+        public static readonly string Default = "--";
+        public static readonly string Start = "SS";
+        public static readonly string End = "EE";
+        public static readonly string Block = "BB";
+        public static readonly string Valuable = "$$";
+        public static readonly string Teleport = "TT";
 
         public static readonly string ConveyorUp = "C1";
         public static readonly string ConveyorDown = "C2";

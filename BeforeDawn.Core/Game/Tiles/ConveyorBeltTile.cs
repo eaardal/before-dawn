@@ -42,6 +42,12 @@ namespace BeforeDawn.Core.Game.Tiles
                         .Cast<ConveyorBeltTile>()
                         .FirstOrDefault();
 
+                var test =
+                    _levelState.Tiles
+                        .Where(tile => tile.IsConveyorBeltTile)
+                        .Where(tile => tile.Boundaries.Intersects(_levelState.Player.Boundaries))
+                        .Cast<ConveyorBeltTile>().ToList();
+
                 if (currentTile == null)
                 {
                     return;
@@ -54,6 +60,14 @@ namespace BeforeDawn.Core.Game.Tiles
                 else if (currentTile.Direction == Direction.Right)
                 {
                     _levelState.Player.GoToTile(currentTile.TileLayoutX + 1, currentTile.TileLayoutY);
+                }
+                else if (currentTile.Direction == Direction.Left)
+                {
+                    _levelState.Player.GoToTile(currentTile.TileLayoutX - 1, currentTile.TileLayoutY);
+                }
+                else if (currentTile.Direction == Direction.Up)
+                {
+                    _levelState.Player.GoToTile(currentTile.TileLayoutX, currentTile.TileLayoutY - 1);
                 }
 
                 _aggregatedGameTime = 0;
@@ -92,22 +106,18 @@ namespace BeforeDawn.Core.Game.Tiles
             var texture = LoadTexture("Tile_Conveyor");
             SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture.Bounds));
 
+            UseCenterAsOrigin = true;
+
             if (Direction == Direction.Up)
             {
-                UseCenterAsOrigin = true;
-                Boundaries = new Rectangle((int)CenterLocation.X, (int)CenterLocation.Y, Texture.Width, Texture.Height);
                 Rotation = MathHelper.Pi * 1.5f;
             }
             else if (Direction == Direction.Down)
             {
-                UseCenterAsOrigin = true;
-                //Boundaries = new Rectangle((int)CenterLocation.X, (int)CenterLocation.Y, Texture.Width, Texture.Height);
                 Rotation = MathHelper.Pi * 0.5f;
             }
             else if (Direction == Direction.Left)
             {
-                UseCenterAsOrigin = true;
-                Boundaries = new Rectangle((int)CenterLocation.X, (int)CenterLocation.Y, Texture.Width, Texture.Height);
                 Rotation = MathHelper.Pi * 1f;
             }
             else if (Direction == Direction.Right)
@@ -116,7 +126,6 @@ namespace BeforeDawn.Core.Game.Tiles
             }
 
             Collision = TileCollision.Passable;
-            //Color = Color.Red;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

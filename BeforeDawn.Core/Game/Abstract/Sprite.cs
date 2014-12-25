@@ -8,6 +8,7 @@ namespace BeforeDawn.Core.Game.Abstract
     {
         private Rectangle? _sourceRectangle;
         private Vector2 _location;
+        private bool _useCenterAsOrigin;
         public Rectangle Boundaries { get; protected set; }
         public Texture2D Texture { get; protected set; }
 
@@ -18,6 +19,7 @@ namespace BeforeDawn.Core.Game.Abstract
             {
                 _location = value;
                 Boundaries = new Rectangle((int)value.X, (int)value.Y, Boundaries.Width, Boundaries.Height);
+                DrawRectangle = new Rectangle((int)value.X, (int)value.Y, Boundaries.Width, Boundaries.Height);
             }
         }
 
@@ -47,7 +49,19 @@ namespace BeforeDawn.Core.Game.Abstract
         public Vector2? Scale { get; protected set; }
         public SpriteEffects SpriteEffect { get; protected set; }
         public float Depth { get; protected set; }
-        public bool UseCenterAsOrigin { get; protected set; }
+
+        public bool UseCenterAsOrigin
+        {
+            get { return _useCenterAsOrigin; }
+            protected set
+            {
+                _useCenterAsOrigin = value;
+                if (_useCenterAsOrigin)
+                {
+                    DrawRectangle = new Rectangle(Boundaries.X + Boundaries.Width / 2, Boundaries.Y + Boundaries.Height / 2, Boundaries.Width, Boundaries.Height);
+                }
+            }
+        }
 
         protected Sprite() { }
 
@@ -72,7 +86,7 @@ namespace BeforeDawn.Core.Game.Abstract
             Location = location;
             Rotation = 0.0f;
             Color = Color.White;
-            DrawRectangle = null;
+            DrawRectangle = boundaries;
             SourceRectangle = null;
             Scale = Vector2.Zero;
             SpriteEffect = SpriteEffects.None;
@@ -98,7 +112,7 @@ namespace BeforeDawn.Core.Game.Abstract
 
         public virtual void DrawWithAllSettings(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, null, Boundaries, SourceRectangle, UseCenterAsOrigin ? Center : Origin, Rotation, Scale, Color, SpriteEffect, Depth);
+            spriteBatch.Draw(Texture, null, DrawRectangle, SourceRectangle, UseCenterAsOrigin ? Center : Origin, Rotation, Scale, Color, SpriteEffect, Depth);
         }
 
         public abstract void Update(GameTime gameTime, KeyboardState keyboardState);

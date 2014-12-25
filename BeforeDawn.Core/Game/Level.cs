@@ -210,7 +210,7 @@ namespace BeforeDawn.Core.Game
             {
                 yCounter++;
 
-                var matches = new Regex(@"([a-zA-Z0-9\$])+").Matches(lines[i]);
+                var matches = new Regex(@"([a-zA-Z0-9\$\-])+").Matches(lines[i]);
 
                 for (var j = 0; j < matches.Count; j++)
                 {
