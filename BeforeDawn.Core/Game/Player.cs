@@ -59,7 +59,7 @@ namespace BeforeDawn.Core.Game
             {
                 _bypassMovementSpeedLimit = true;
             }
-
+            
             if (_bypassMovementSpeedLimit || _aggregatedGameTime > MovementSpeed)
             {
                 if (keyboardState.IsKeyDown(Keys.W))
@@ -183,6 +183,17 @@ namespace BeforeDawn.Core.Game
         {
             return String.Format("Texture.Bounds.X: {0}, Texture.Bounds.Y:{1}, Location.X:{2}, Location.Y:{3}",
                 Texture.Bounds.X, Texture.Bounds.Y, Location.X, Location.Y);
+        }
+
+        public void GoToLocation(int x, int y)
+        {
+            TryMoveToLocation(new Vector2(x, y));
+        }
+
+        public void GoToTile(int tileLayoutX, int tileLayoutY)
+        {
+            var vector = TilePlacement.CalculateLocationForTileLayout(tileLayoutX, tileLayoutY, Boundaries);
+            TryMoveToLocation(vector);
         }
 
         public void GoToTile(ITile tile)

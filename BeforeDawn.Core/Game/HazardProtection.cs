@@ -13,13 +13,17 @@ namespace BeforeDawn.Core.Game
     {
         public string Hazard { get; private set; }
 
-        public HazardProtection(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus) : base(contentManager, levelState, messageBus)
+        public HazardProtection(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus) 
+            : base(contentManager, levelState, messageBus)
         {
         }
 
         protected override void Collect()
         {
-            var hazardTiles = LevelState.Tiles.Where(t => t is IHazard).Cast<IHazard>().Where(h => h.Hazard == Hazard);
+            var hazardTiles = LevelState.Tiles
+                .Where(t => t is IHazard)
+                .Cast<IHazard>()
+                .Where(h => h.Hazard == Hazard);
 
             foreach (var tile in hazardTiles)
             {
@@ -38,7 +42,7 @@ namespace BeforeDawn.Core.Game
         public override void Initialize(TileMatch match)
         {
             var texture = ContentManager.Load<Texture2D>("Items\\Item_HazardProtection");
-            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture));
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture.Bounds));
 
             SetHazard(match);
             SetColor(match);

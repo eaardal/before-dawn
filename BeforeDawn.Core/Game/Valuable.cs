@@ -31,7 +31,7 @@ namespace BeforeDawn.Core.Game
         public override void Initialize(TileMatch match)
         {
             var texture = ContentManager.Load<Texture2D>("Items\\Item_Valuable");
-            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture));
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture.Bounds));
         }
     }
 }

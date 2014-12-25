@@ -45,7 +45,7 @@ namespace BeforeDawn.Core.Game
         public override void Initialize(TileMatch match)
         {
             var texture = ContentManager.Load<Texture2D>("DoorKey");
-            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture));
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(match.X, match.Y, texture.Bounds));
 
             SetDoor(match);
             SetColor(match);

@@ -44,7 +44,7 @@ namespace BeforeDawn.Core.Game.Tiles
         protected override void LoadTile()
         {
             var texture = LoadTexture("Tile_Default");
-            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture));
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture.Bounds));
             Collision = TileCollision.Passable;
         }
     }

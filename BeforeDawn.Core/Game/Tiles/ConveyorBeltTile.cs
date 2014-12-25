@@ -13,9 +13,10 @@ namespace BeforeDawn.Core.Game.Tiles
 {
     class ConveyorBeltTile : Tile
     {
+        private int _aggregatedGameTime;
         private readonly ILevelState _levelState;
         public Direction Direction { get; private set; }
-        public int ConveyorSpeed { get { return 30; } }
+        public int ConveyorSpeed { get { return 100; } }
 
         public ConveyorBeltTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager)
         {
@@ -25,23 +26,37 @@ namespace BeforeDawn.Core.Game.Tiles
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            var isOnConveyorBeltTile =
-                _levelState.Tiles.Where(tile => tile.IsConveyorBeltTile)
-                    .Any(tile => tile.Boundaries.Intersects(Boundaries));
-
-            var t = _levelState.Tiles.Where(tile => tile.Boundaries.Intersects(Boundaries));
-
-            if (isOnConveyorBeltTile)
+            if (Boundaries.Intersects(_levelState.Player.Boundaries))
             {
-                var currentTile = _levelState.Tiles.Where(tile => tile.IsConveyorBeltTile).Where(tile => tile.Boundaries.Intersects(Boundaries));
+                _aggregatedGameTime += gameTime.ElapsedGameTime.Milliseconds;
 
-                foreach (var tile in currentTile.Cast<ConveyorBeltTile>())
+                if (_aggregatedGameTime < ConveyorSpeed)
                 {
-                    if (tile.Direction == Direction.Up)
-                    {
-                        //TryMoveToLocation(new Vector2(Location.X, Location.Y - tile.ConveyorSpeed));
-                    }
+                    return;
                 }
+
+                var currentTile =
+                    _levelState.Tiles
+                        .Where(tile => tile.IsConveyorBeltTile)
+                        .Where(tile => tile.Boundaries.Intersects(_levelState.Player.Boundaries))
+                        .Cast<ConveyorBeltTile>()
+                        .FirstOrDefault();
+
+                if (currentTile == null)
+                {
+                    return;
+                }
+
+                if (currentTile.Direction == Direction.Down)
+                {
+                    _levelState.Player.GoToTile(currentTile.TileLayoutX, currentTile.TileLayoutY + 1);
+                }
+                else if (currentTile.Direction == Direction.Right)
+                {
+                    _levelState.Player.GoToTile(currentTile.TileLayoutX + 1, currentTile.TileLayoutY);
+                }
+
+                _aggregatedGameTime = 0;
             }
         }
 
@@ -75,7 +90,7 @@ namespace BeforeDawn.Core.Game.Tiles
         protected override void LoadTile()
         {
             var texture = LoadTexture("Tile_Conveyor");
-            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture));
+            SetDefaultValues(texture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, texture.Bounds));
 
             if (Direction == Direction.Up)
             {
@@ -86,7 +101,7 @@ namespace BeforeDawn.Core.Game.Tiles
             else if (Direction == Direction.Down)
             {
                 UseCenterAsOrigin = true;
-                Boundaries = new Rectangle((int)CenterLocation.X, (int)CenterLocation.Y, Texture.Width, Texture.Height);
+                //Boundaries = new Rectangle((int)CenterLocation.X, (int)CenterLocation.Y, Texture.Width, Texture.Height);
                 Rotation = MathHelper.Pi * 0.5f;
             }
             else if (Direction == Direction.Left)
@@ -101,6 +116,7 @@ namespace BeforeDawn.Core.Game.Tiles
             }
 
             Collision = TileCollision.Passable;
+            //Color = Color.Red;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
