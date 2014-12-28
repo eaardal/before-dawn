@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 
 namespace BeforeDawn.Core.Infrastructure

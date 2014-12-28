@@ -33,13 +33,14 @@ namespace BeforeDawn.Core.Game
         private readonly ILevelState _levelState;
         private readonly IEnumerable<ITile> _tileDefinitions;
         private readonly IMessageBus _messageBus;
+        private readonly ICamera2D _camera;
         private Action _levelCompleted;
 
         public IContentManagerAdapter Content { get; private set; }
 
         public Level(IContentManagerAdapter contentManager, IServiceProvider serviceProvider,
             IIoC ioc, IStreamReaderAdapter streamReader, ITimeSpanAdapter timeSpan,
-            ILevelState levelState, IEnumerable<ITile> tileDefinitions, IMessageBus messageBus)
+            ILevelState levelState, IEnumerable<ITile> tileDefinitions, IMessageBus messageBus, ICamera2D camera)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
             if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
@@ -49,6 +50,7 @@ namespace BeforeDawn.Core.Game
             if (levelState == null) throw new ArgumentNullException("levelState");
             if (tileDefinitions == null) throw new ArgumentNullException("tileDefinitions");
             if (messageBus == null) throw new ArgumentNullException("messageBus");
+            if (camera == null) throw new ArgumentNullException("camera");
 
             contentManager.Create(serviceProvider, "Content");
             Content = contentManager;
@@ -59,6 +61,7 @@ namespace BeforeDawn.Core.Game
             _levelState = levelState;
             _tileDefinitions = tileDefinitions;
             _messageBus = messageBus;
+            _camera = camera;
 
             _textureLayers = new List<Texture2D>();
 
@@ -96,7 +99,9 @@ namespace BeforeDawn.Core.Game
 
             var startTile = _levelState.Tiles.Single(tile => tile.IsStartTile);
 
-            _levelState.Player.Initialize(startTile.Location);
+            _levelState.Player.Initialize(startTile.Position);
+
+            _camera.Focus = _levelState.Player;
         }
 
         private void LoadTiles(IStreamAdapter fileStream)

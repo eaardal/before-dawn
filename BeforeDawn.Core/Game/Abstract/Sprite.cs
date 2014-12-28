@@ -7,32 +7,32 @@ namespace BeforeDawn.Core.Game.Abstract
     public abstract class Sprite : ISprite, IDraw, IUpdate
     {
         private Rectangle? _sourceRectangle;
-        private Vector2 _location;
+        private Vector2 _position;
         private bool _useCenterAsOrigin;
         public Rectangle Boundaries { get; protected set; }
         public Texture2D Texture { get; protected set; }
 
-        public Vector2 Location
+        public Vector2 Position
         {
-            get { return _location; }
+            get { return _position; }
             protected set
             {
-                _location = value;
+                _position = value;
                 Boundaries = new Rectangle((int)value.X, (int)value.Y, Boundaries.Width, Boundaries.Height);
                 DrawRectangle = new Rectangle((int)value.X, (int)value.Y, Boundaries.Width, Boundaries.Height);
             }
         }
 
         public Vector2 Center { get { return new Vector2(Boundaries.Width / 2.0f, Boundaries.Height / 2.0f); } }
-        public Vector2 CenterLocation { get { return new Vector2(Location.X + Center.X, Location.Y + Center.Y); } }
+        public Vector2 CenterLocation { get { return new Vector2(Position.X + Center.X, Position.Y + Center.Y); } }
         public Vector2 Origin { get; protected set; }
         public float Rotation { get; protected set; }
         public Color Color { get; protected set; }
         public Rectangle? DrawRectangle { get; protected set; }
 
         /// <summary>
-        /// SourceRectangle's X/Y value is based in the current Location.X/Y.
-        /// If the current Location is 100x,100y and SourceRectangle is 0x,50y, it will draw a rectangle at 100x,150y
+        /// SourceRectangle's X/Y value is based in the current Position.X/Y.
+        /// If the current Position is 100x,100y and SourceRectangle is 0x,50y, it will draw a rectangle at 100x,150y
         /// </summary>
         public Rectangle? SourceRectangle
         {
@@ -83,7 +83,7 @@ namespace BeforeDawn.Core.Game.Abstract
         {
             Boundaries = boundaries;
             Texture = texture;
-            Location = location;
+            Position = location;
             Rotation = 0.0f;
             Color = Color.White;
             DrawRectangle = boundaries;
@@ -107,7 +107,7 @@ namespace BeforeDawn.Core.Game.Abstract
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Location, Color.White);
+            spriteBatch.Draw(Texture, Position, Color.White);
         }
 
         public virtual void DrawWithAllSettings(SpriteBatch spriteBatch)

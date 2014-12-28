@@ -16,7 +16,10 @@ namespace BeforeDawn.Core
             var builder = new ContainerBuilder();
 
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Except<IIoC>().Except<ILevelState>()
+                .Except<IIoC>()
+                .Except<ILevelState>()
+                .Except<ICamera2D>()
+                .Except<IMessageBus>()
                 .AsSelf()
                 .Named<ITile>(t => t.FullName)
                 .AsImplementedInterfaces();
@@ -27,13 +30,25 @@ namespace BeforeDawn.Core
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
-            builder.Register<IIoC>(i => new IoC()).SingleInstance();
+            builder.RegisterType<IoC>().As<IIoC>().SingleInstance();
 
-            builder.Register<IMessageBus>(i => new MessageBus()).SingleInstance();
-
-            builder.Register<ILevelState>(p => new LevelState()).SingleInstance();
+            builder.RegisterInstance(game)
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .As<Microsoft.Xna.Framework.Game>()
+                .SingleInstance();
 
             builder.Register<IServiceProvider>(p => game.Services);
+
+            builder.RegisterType<MessageBus>().As<IMessageBus>().SingleInstance();
+
+            builder.RegisterType<LevelState>().As<ILevelState>().SingleInstance();
+
+            builder.Register<ICamera2D>(c => new Camera2D(game))
+                .AsImplementedInterfaces()
+                .AsSelf()
+                .SingleInstance();
+            
             
             var container = builder.Build();
 

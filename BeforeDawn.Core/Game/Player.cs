@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game
 {
-    class Player : Sprite
+    class Player : Sprite, IFocusable
     {
         private readonly IContentManagerAdapter _contentManager;
         private readonly ILevelState _levelState;
@@ -98,29 +98,29 @@ namespace BeforeDawn.Core.Game
 
         private void TryMoveRight()
         {
-            TryMoveToLocation(new Vector2(Location.X + VelocityX, Location.Y));
+            TryMoveToLocation(new Vector2(Position.X + VelocityX, Position.Y));
         }
 
         private void TryMoveDown()
         {
-            TryMoveToLocation(new Vector2(Location.X, Location.Y + VelocityY));
+            TryMoveToLocation(new Vector2(Position.X, Position.Y + VelocityY));
         }
 
         private void TryMoveLeft()
         {
-            TryMoveToLocation(new Vector2(Location.X - VelocityX, Location.Y));
+            TryMoveToLocation(new Vector2(Position.X - VelocityX, Position.Y));
         }
 
         private void TryMoveUp()
         {
-            TryMoveToLocation(new Vector2(Location.X, Location.Y - VelocityY));
+            TryMoveToLocation(new Vector2(Position.X, Position.Y - VelocityY));
         }
 
         private void TryMoveToLocation(Vector2 location)
         {
             if (CanMoveTo(location))
             {
-                Location = location;
+                Position = location;
             }
         }
 
@@ -168,7 +168,7 @@ namespace BeforeDawn.Core.Game
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Location, SourceRectangle, Color.White);
+            spriteBatch.Draw(Texture, Position, SourceRectangle, Color.White);
         }
 
         public Player Initialize(Vector2 location)
@@ -181,8 +181,8 @@ namespace BeforeDawn.Core.Game
 
         public override string ToString()
         {
-            return String.Format("Texture.Bounds.X: {0}, Texture.Bounds.Y:{1}, Location.X:{2}, Location.Y:{3}",
-                Texture.Bounds.X, Texture.Bounds.Y, Location.X, Location.Y);
+            return String.Format("Texture.Bounds.X: {0}, Texture.Bounds.Y:{1}, Position.X:{2}, Position.Y:{3}",
+                Texture.Bounds.X, Texture.Bounds.Y, Position.X, Position.Y);
         }
 
         public void GoToLocation(int x, int y)
@@ -198,7 +198,7 @@ namespace BeforeDawn.Core.Game
 
         public void GoToTile(ITile tile)
         {
-            TryMoveToLocation(new Vector2(tile.Location.X, tile.Location.Y));
+            TryMoveToLocation(new Vector2(tile.Position.X, tile.Position.Y));
         }
 
         public void Kill()
@@ -207,5 +207,6 @@ namespace BeforeDawn.Core.Game
 
             _messageBus.Publish(new PlayerDied());
         }
+
     }
 }

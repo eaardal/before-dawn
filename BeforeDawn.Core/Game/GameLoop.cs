@@ -1,4 +1,6 @@
-﻿using BeforeDawn.Core.Adapters.Abstract;
+﻿using System.Runtime.InteropServices;
+using BeforeDawn.Core.Adapters.Abstract;
+using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Infrastructure;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,11 +10,12 @@ namespace BeforeDawn.Core.Game
 {
     public class GameLoop : Microsoft.Xna.Framework.Game
     {
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private GameEngine _gameEngine;
         private IIoC _ioc;
-        
+        private ICamera2D _camera;
+
         public GameLoop() : base()
         {
             Content.RootDirectory = "Content";
@@ -26,6 +29,9 @@ namespace BeforeDawn.Core.Game
         protected override void Initialize()
         {
             _ioc = Bootstrapper.Wire(this);
+            
+            _camera = _ioc.Resolve<ICamera2D>();
+            Components.Add(_camera);
 
             _gameEngine = _ioc.Resolve<GameEngine>();
             
@@ -57,7 +63,8 @@ namespace BeforeDawn.Core.Game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, _camera.Transform);
 
             _gameEngine.Draw(gameTime, _spriteBatch);
 

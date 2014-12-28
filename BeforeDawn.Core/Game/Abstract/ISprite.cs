@@ -8,7 +8,7 @@ namespace BeforeDawn.Core.Game.Abstract
     {
         Rectangle Boundaries { get; }
         Texture2D Texture { get; }
-        Vector2 Location { get; }
+        Vector2 Position { get; }
         Vector2 Center { get; }
         Vector2 CenterLocation { get; }
         Vector2 Origin { get; }
@@ -17,8 +17,8 @@ namespace BeforeDawn.Core.Game.Abstract
         Rectangle? DrawRectangle { get; }
 
         /// <summary>
-        /// SourceRectangle's X/Y value is based in the current Location.X/Y.
-        /// If the current Location is 100x,100y and SourceRectangle is 0x,50y, it will draw a rectangle at 100x,150y
+        /// SourceRectangle's X/Y value is based in the current Position.X/Y.
+        /// If the current Position is 100x,100y and SourceRectangle is 0x,50y, it will draw a rectangle at 100x,150y
         /// </summary>
         Rectangle? SourceRectangle { get; }
 
