@@ -31,8 +31,10 @@ namespace BeforeDawn.Core.Game
             _ioc = Bootstrapper.Wire(this);
             
             _camera = _ioc.Resolve<ICamera2D>();
-            Components.Add(_camera);
+            _camera.AlwaysCenterFocus = true;
 
+            Components.Add(_camera);
+            
             _gameEngine = _ioc.Resolve<GameEngine>();
             
             base.Initialize();

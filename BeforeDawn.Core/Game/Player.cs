@@ -86,7 +86,7 @@ namespace BeforeDawn.Core.Game
                     TryMoveRight();
                     RestrictMovementSpeed();
                 }
-
+                Debug.WriteLine("player position: " + ToString());
                 _aggregatedGameTime = 0;
             }
         }
@@ -181,8 +181,7 @@ namespace BeforeDawn.Core.Game
 
         public override string ToString()
         {
-            return String.Format("Texture.Bounds.X: {0}, Texture.Bounds.Y:{1}, Position.X:{2}, Position.Y:{3}",
-                Texture.Bounds.X, Texture.Bounds.Y, Position.X, Position.Y);
+            return String.Format("Position.X:{0}, Position.Y:{1}", Position.X, Position.Y);
         }
 
         public void GoToLocation(int x, int y)

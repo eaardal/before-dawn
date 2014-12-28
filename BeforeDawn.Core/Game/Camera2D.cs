@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using BeforeDawn.Core.Game.Abstract;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,6 +13,12 @@ namespace BeforeDawn.Core.Game
     {
         private readonly Microsoft.Xna.Framework.Game _game;
         private Vector2 _position;
+        private bool _hasRunOnce;
+        private Rectangle _passiveArea;
+        private Rectangle _topBufferArea;
+        private Rectangle _bottomBufferArea;
+        private Rectangle _leftBufferArea;
+        private Rectangle _rightBufferArea;
         protected float ViewportHeight;
         protected float ViewportWidth;
 
@@ -37,6 +44,7 @@ namespace BeforeDawn.Core.Game
         public IFocusable Focus { get; set; }
         public float MoveSpeed { get; set; }
         public bool EnableCameraDragEffect { get; set; }
+        public bool AlwaysCenterFocus { get; set; }
 
         #endregion
 
@@ -52,6 +60,27 @@ namespace BeforeDawn.Core.Game
             Scale = 1;
             MoveSpeed = 1f;
 
+            const int bufferPercentage = 10;
+
+            var xBuffer = (int)ViewportWidth * bufferPercentage / 100;
+            var yBuffer = (int)ViewportHeight * bufferPercentage / 100;
+
+            var minXBuffer = xBuffer;
+            var minYBuffer = yBuffer;
+
+            var maxXBuffer = ViewportWidth - xBuffer;
+            var maxYBuffer = ViewportHeight - yBuffer;
+
+            var passiveAreaWidth = (int)ViewportWidth - (xBuffer * 2);
+            var passiveAreaHeight = (int)ViewportHeight - (yBuffer * 2);
+
+            _passiveArea = new Rectangle(xBuffer, yBuffer, passiveAreaWidth, passiveAreaHeight);
+
+            _topBufferArea = new Rectangle(0, 0, (int)ViewportWidth, yBuffer);
+            _bottomBufferArea = new Rectangle(0, _passiveArea.Bottom, (int)ViewportWidth, yBuffer);
+            _leftBufferArea = new Rectangle(yBuffer, _passiveArea.X, xBuffer, passiveAreaHeight);
+            _rightBufferArea = new Rectangle(_passiveArea.Right, yBuffer, xBuffer, _passiveArea.Height);
+
             base.Initialize();
         }
 
@@ -61,7 +90,7 @@ namespace BeforeDawn.Core.Game
             {
                 return;
             }
-
+            
             // Create the Transform used by any
             // spritebatch process
             Transform = Matrix.Identity *
@@ -75,10 +104,55 @@ namespace BeforeDawn.Core.Game
             // Move the Camera to the position that it needs to go
             var delta = EnableCameraDragEffect ? (float)gameTime.ElapsedGameTime.TotalSeconds : 1f;
 
-            _position.X += (Focus.Position.X - Position.X) * MoveSpeed * delta;
-            _position.Y += (Focus.Position.Y - Position.Y) * MoveSpeed * delta;
+            PrintBufferAreaStatus();
+
+            if (AlwaysCenterFocus || !_hasRunOnce || (_leftBufferArea.Contains(Focus.Position) || _rightBufferArea.Contains(Focus.Position)))
+            {
+                _position.X += (Focus.Position.X - Position.X) * MoveSpeed * delta;    
+            }
+
+            if (AlwaysCenterFocus || !_hasRunOnce || (_topBufferArea.Contains(Focus.Position) || _bottomBufferArea.Contains(Focus.Position)))
+            {
+                _position.Y += (Focus.Position.Y - Position.Y) * MoveSpeed * delta;
+            }
+            
+            if (!_hasRunOnce)
+                _hasRunOnce = true;
 
             base.Update(gameTime);
+        }
+
+        private void PrintBufferAreaStatus()
+        {
+            if (_rightBufferArea.Contains(Focus.Position))
+            {
+                Debug.WriteLine("Right buffer area contains focus position: True");
+            }
+
+            if (_leftBufferArea.Contains(Focus.Position)) 
+            {
+                Debug.WriteLine("Left buffer area contains focus position: True");
+            }
+
+            if (_topBufferArea.Contains(Focus.Position))
+            {
+                Debug.WriteLine("Top buffer area contains focus position: True");
+            }
+
+            if (_bottomBufferArea.Contains(Focus.Position))
+            {
+                Debug.WriteLine("Bottom buffer area contains focus position: True");
+            }
+        }
+
+        private bool ShouldMove()
+        {
+            if (Focus == null)
+                return false;
+
+            Debug.WriteLine("Is in passive area? {0}", _passiveArea.Contains(Focus.Position));
+
+            return _hasRunOnce && _passiveArea.Contains(Focus.Position);
         }
 
         /// <summary>

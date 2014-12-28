@@ -63,6 +63,11 @@ namespace BeforeDawn.Core.Game.Abstract
         bool EnableCameraDragEffect { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating wether to always have the focus target in the center of the camera (move camera every time focus object moves)
+        /// </summary>
+        bool AlwaysCenterFocus { get; set; }
+
+        /// <summary>
         /// Determines whether the target is in view given the specified position.
         /// This can be used to increase performance by not drawing objects
         /// directly in the viewport

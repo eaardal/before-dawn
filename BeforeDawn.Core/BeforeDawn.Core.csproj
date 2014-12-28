@@ -110,8 +110,6 @@
     <Compile Include="Infrastructure\MessageBus.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResolutionIndependentRenderer.cs" />
-    <Compile Include="SimpleCamera2D.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Autofac">
