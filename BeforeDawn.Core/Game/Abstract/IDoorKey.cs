@@ -1,6 +1,6 @@
 ﻿namespace BeforeDawn.Core.Game.Abstract
 {
-    internal interface IDoorKey : ICollectable
+    internal interface IDoorKey : ICollectable, IUsableInventoryItem
     {
         string Door { get; }
     }

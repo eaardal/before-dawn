@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BeforeDawn.Core.Game.Abstract;
+using BeforeDawn.Core.Game.Tiles;
 
 namespace BeforeDawn.Core.Game.Helpers
 {
@@ -64,6 +65,24 @@ namespace BeforeDawn.Core.Game.Helpers
             return tiles.FirstOrDefault(
                                 tile => tile.TileLayoutX == rootTile.TileLayoutX
                                         && tile.TileLayoutY == rootTile.TileLayoutY + 1);
+        }
+
+        public static bool IsNeighbour(this ITile rootTile, ITile tileToCheckIfNeighbour)
+        {
+            return rootTile.IsNeighbour(tileToCheckIfNeighbour.TileLayoutX, tileToCheckIfNeighbour.TileLayoutY);
+        }
+
+        public static bool IsNeighbour(this ITile rootTile, int tileLayoutX, int tileLayoutY)
+        {
+            var isAboveNeighbour = rootTile.TileLayoutY - 1 == tileLayoutY;
+
+            var isBelowNeighbour = rootTile.TileLayoutY + 1 == tileLayoutY;
+
+            var isLeftNeighbour = rootTile.TileLayoutX - 1 == tileLayoutX;
+
+            var isRightNeighbour = rootTile.TileLayoutX + 1 == tileLayoutX;
+
+            return isAboveNeighbour || isBelowNeighbour || isLeftNeighbour || isRightNeighbour;
         }
     }
 }

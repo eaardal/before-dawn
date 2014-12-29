@@ -10,17 +10,45 @@ using Microsoft.Xna.Framework.Input;
 
 namespace BeforeDawn.Core.Game
 {
-    class Door : Collectable, IDoor
+    class Door : Collectable, IDoor, IRequireInventoryItem<IDoorKey>
     {
         public string Key { get; private set; }
 
-        public Door(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus) 
+        public Door(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus)
             : base(contentManager, levelState, messageBus)
         {
         }
 
+
+        public bool HasRequiredItem
+        {
+            get { return Item != null; }
+        }
+
+        public IDoorKey Item
+        {
+            get
+            {
+                return LevelState.Collectables
+                    .Where(item => item.IsCollected)
+                    .Where(item => item is IDoorKey)
+                    .Cast<IDoorKey>()
+                    .FirstOrDefault(key => key.Identifier == Key);
+            }
+        }
+
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
+            if (Boundaries.Contains(LevelState.Player.Boundaries))
+            {
+                if (LevelState.Player.Inventory.Any(item => item.Identifier == Key))
+                {
+                    if (HasRequiredItem)
+                    {
+                        Item.Use(this);
+                    }
+                }
+            }
         }
 
         public override void Initialize(TileMatch match)
@@ -30,6 +58,12 @@ namespace BeforeDawn.Core.Game
 
             SetColor(match);
             SetKey(match);
+        
+            var tile = LevelState.Tiles.TileAt(match.X, match.Y);
+            if (tile != null)
+            {
+                tile.Collision = TileCollision.Interactive;
+            }
 
             base.Initialize(match);
         }

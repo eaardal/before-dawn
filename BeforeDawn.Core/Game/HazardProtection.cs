@@ -9,9 +9,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace BeforeDawn.Core.Game
 {
-    class HazardProtection : Collectable, IHazardProtection
+    class HazardProtection : Collectable, IHazardProtection, IInventoryItem
     {
         public string Hazard { get; private set; }
+        public string Identifier { get; private set; }
 
         public HazardProtection(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus) 
             : base(contentManager, levelState, messageBus)
@@ -20,6 +21,8 @@ namespace BeforeDawn.Core.Game
 
         protected override void Collect()
         {
+            LevelState.Player.Inventory.Add(this);
+            
             var hazardTiles = LevelState.Tiles
                 .Where(t => t is IHazard)
                 .Cast<IHazard>()
@@ -29,7 +32,7 @@ namespace BeforeDawn.Core.Game
             {
                 tile.DisableHazard();
             }
-
+            
             base.Collect();
         }
 
@@ -46,6 +49,7 @@ namespace BeforeDawn.Core.Game
 
             SetHazard(match);
             SetColor(match);
+            Identifier = match.TileType;
 
             base.Initialize(match);
         }

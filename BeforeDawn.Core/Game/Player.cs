@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using BeforeDawn.Core.Adapters.Abstract;
@@ -32,6 +33,7 @@ namespace BeforeDawn.Core.Game
 
         public int Health { get; private set; }
         public Direction Direction { get; private set; }
+        public List<IInventoryItem> Inventory { get; set; }
 
         public Player(IContentManagerAdapter contentManager, ILevelState levelState, IMessageBus messageBus)
         {
@@ -49,6 +51,8 @@ namespace BeforeDawn.Core.Game
             _facingSouthTextureOffset = new Rectangle(150, 0, Width, Height);
 
             Health = 100;
+
+            Inventory = new List<IInventoryItem>();
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
@@ -131,7 +135,21 @@ namespace BeforeDawn.Core.Game
 
         private bool CanMoveTo(Rectangle location)
         {
-            return !_levelState.Tiles.Where(tile => tile.IsBlockTile || tile.Collision == TileCollision.Impassable).Any(tile => tile.Boundaries.Intersects(location));
+            var isBlockOrImpassableTile = _levelState.Tiles
+                .Where(tile => tile.IsBlockTile || tile.Collision == TileCollision.Impassable)
+                .Any(tile => tile.Boundaries.Intersects(location));
+
+            var lockedItem = _levelState.Collectables
+                .Where(item => item.Boundaries.Intersects(location))
+                .Where(item => item is IRequireInventoryItem)
+                .Cast<IRequireInventoryItem>()
+                .FirstOrDefault();
+
+            if (lockedItem != null)
+            {
+                return !isBlockOrImpassableTile && lockedItem.HasRequiredItem;
+            }
+            return !isBlockOrImpassableTile;
         }
 
         private void FaceRight()
@@ -205,6 +223,11 @@ namespace BeforeDawn.Core.Game
             Health = 0;
 
             _messageBus.Publish(new PlayerDied());
+        }
+
+        public ITile GetCurrentTile()
+        {
+            return _levelState.Tiles.Single(tile => tile.Position.Equals(Position));
         }
 
     }

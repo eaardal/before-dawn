@@ -32,7 +32,7 @@ namespace BeforeDawn.Core.Game
             
             _camera = _ioc.Resolve<ICamera2D>();
             _camera.AlwaysCenterFocus = true;
-
+            
             Components.Add(_camera);
             
             _gameEngine = _ioc.Resolve<GameEngine>();

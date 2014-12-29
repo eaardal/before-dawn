@@ -3,6 +3,7 @@
     enum TileCollision
     {
         Passable,
-        Impassable
+        Impassable,
+        Interactive
     }
 }

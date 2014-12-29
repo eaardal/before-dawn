@@ -13,19 +13,15 @@ namespace BeforeDawn.Core.Game
     class DoorKey : Collectable, IDoorKey
     {
         public string Door { get; private set; }
-
+        public string Identifier { get; private set; }
+   
         public DoorKey(IContentManagerAdapter contentManager, IMessageBus messageBus, ILevelState levelState) : base(contentManager, levelState, messageBus)
         {
         }
 
-        protected override void Collect()
+        public void Use(params object[] parameters)
         {
-            var doorForKey =
-                LevelState.Collectables
-                    .Where(c => c is IDoor)
-                    .Where(c => !String.IsNullOrEmpty(c.CollectableKind))
-                    .Cast<IDoor>()
-                    .FirstOrDefault(tile => tile.Key == CollectableKind);
+            var doorForKey = parameters[0] as IDoor;
 
             if (doorForKey != null)
             {
@@ -38,6 +34,11 @@ namespace BeforeDawn.Core.Game
                     tileForDoor.Collision = TileCollision.Passable;
                 }
             }
+        }
+
+        protected override void Collect()
+        {
+            LevelState.Player.Inventory.Add(this);
 
             base.Collect();
         }
@@ -49,6 +50,8 @@ namespace BeforeDawn.Core.Game
 
             SetDoor(match);
             SetColor(match);
+            
+            Identifier = match.TileType;
 
             base.Initialize(match);
         }

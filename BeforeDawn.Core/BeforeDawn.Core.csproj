@@ -57,12 +57,15 @@
     <Compile Include="Game\Abstract\IDraw.cs" />
     <Compile Include="Game\Abstract\IFocusable.cs" />
     <Compile Include="Game\Abstract\IHazard.cs" />
+    <Compile Include="Game\Abstract\IInventoryItem.cs" />
     <Compile Include="Game\Abstract\ILevel.cs" />
     <Compile Include="Game\Abstract\ILevelState.cs" />
     <Compile Include="Game\Abstract\ILoadContent.cs" />
+    <Compile Include="Game\Abstract\IRequireInventoryItem.cs" />
     <Compile Include="Game\Abstract\ISprite.cs" />
     <Compile Include="Game\Abstract\ITile.cs" />
     <Compile Include="Game\Abstract\IUpdate.cs" />
+    <Compile Include="Game\Abstract\IUsableInventoryItem.cs" />
     <Compile Include="Game\Abstract\IValuable.cs" />
     <Compile Include="Game\Abstract\Sprite.cs" />
     <Compile Include="Game\Builders\PlayerBuilder.cs" />
