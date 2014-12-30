@@ -7,6 +7,7 @@ namespace BeforeDawn.Core.Game.Helpers
         public static readonly string Default = "--";
         public static readonly string Start = "SS";
         public static readonly string End = "EE";
+        public static readonly string EndBlock = "EB";
         public static readonly string Block = "BB";
         public static readonly string Valuable = "$$";
         public static readonly string Teleport = "TT";
