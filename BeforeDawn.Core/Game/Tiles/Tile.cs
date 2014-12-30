@@ -12,6 +12,7 @@ namespace BeforeDawn.Core.Game.Tiles
 {
     abstract class Tile : Sprite, ITile
     {
+        protected ILevelState LevelState { get; private set; }
         private readonly IContentManagerAdapter _contentManager;
         
         public int TileLayoutX { get; set; }
@@ -28,10 +29,12 @@ namespace BeforeDawn.Core.Game.Tiles
 
         public abstract List<string> TileTypes { get; }
 
-        protected Tile(IContentManagerAdapter contentManager)
+        protected Tile(IContentManagerAdapter contentManager, ILevelState levelState)
         {
             if (contentManager == null) throw new ArgumentNullException("contentManager");
+            if (levelState == null) throw new ArgumentNullException("levelState");
             _contentManager = contentManager;
+            LevelState = levelState;
         }
 
         public virtual void Initialize(TileMatch tile)
@@ -44,6 +47,11 @@ namespace BeforeDawn.Core.Game.Tiles
         protected Texture2D LoadTexture(string assetName)
         {
             return _contentManager.Load<Texture2D>("Tiles/" + assetName);
+        }
+
+        protected bool IsPlayerOnTile()
+        {
+            return Boundaries.Contains(LevelState.Player.Boundaries);
         }
 
         protected abstract void LoadTile();

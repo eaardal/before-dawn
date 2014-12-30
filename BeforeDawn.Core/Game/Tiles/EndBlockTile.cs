@@ -16,15 +16,12 @@ namespace BeforeDawn.Core.Game.Tiles
     class EndBlockTile : Tile
     {
         private bool _isBlocking;
-        private readonly ILevelState _levelState;
         private Texture2D _collectedTexture;
 
-        public EndBlockTile(IContentManagerAdapter contentManager, IMessageBus messageBus, ILevelState levelState) : base(contentManager)
+        public EndBlockTile(IContentManagerAdapter contentManager, IMessageBus messageBus, ILevelState levelState) 
+            : base(contentManager, levelState)
         {
             if (messageBus == null) throw new ArgumentNullException("messageBus");
-            if (levelState == null) throw new ArgumentNullException("levelState");
-
-            _levelState = levelState;
             
             _isBlocking = true;
 
@@ -36,7 +33,7 @@ namespace BeforeDawn.Core.Game.Tiles
             if (msg.Item is IValuable)
             {
                 _isBlocking =
-                    _levelState.Collectables
+                    LevelState.Collectables
                         .Where(item => item is IValuable)
                         .Cast<IValuable>()
                         .All(val => !val.IsCollected);
@@ -50,7 +47,7 @@ namespace BeforeDawn.Core.Game.Tiles
                 Collision = TileCollision.Passable;
             }
 
-            if (Boundaries.Contains(_levelState.Player.Boundaries))
+            if (Boundaries.Contains(LevelState.Player.Boundaries))
             {
                 SetDefaultValues(_collectedTexture, TilePlacement.CalculateLocationForTileLayout(TileLayoutX, TileLayoutY, _collectedTexture.Bounds));
             }

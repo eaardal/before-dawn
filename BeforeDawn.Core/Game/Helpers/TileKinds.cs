@@ -12,6 +12,8 @@ namespace BeforeDawn.Core.Game.Helpers
         public static readonly string Valuable = "$$";
         public static readonly string Teleport = "TT";
         public static readonly string Sand = "SA";
+        public static readonly string InvisibleAlways = "I1";
+        public static readonly string InvisibleTouched = "I2";
 
         public static readonly string ConveyorUp = "C1";
         public static readonly string ConveyorDown = "C2";
@@ -37,10 +39,11 @@ namespace BeforeDawn.Core.Game.Helpers
 
         public static readonly string HazardProtectionFire = "P1";
         public static readonly string HazardProtectionWater = "P2";
-        public static readonly string[] HazardProtections = {HazardProtectionFire, HazardProtectionWater};
+        public static readonly string[] HazardProtections = { HazardProtectionFire, HazardProtectionWater };
 
         public static readonly IEnumerable<string> Collectables;
         
+
 
         static TileKinds()
         {

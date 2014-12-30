@@ -11,57 +11,53 @@ namespace BeforeDawn.Core.Game.Tiles
 {
     class TeleportTile : Tile
     {
-        private readonly ILevelState _levelState;
-
-        public TeleportTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager)
+        public TeleportTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager, levelState)
         {
-            if (levelState == null) throw new ArgumentNullException("levelState");
-            _levelState = levelState;
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            if (Boundaries.Intersects(_levelState.Player.Boundaries))
+            if (Boundaries.Intersects(LevelState.Player.Boundaries))
             {
-                if (_levelState.Player.Direction == Direction.Right)
+                if (LevelState.Player.Direction == Direction.Right)
                 {
                     var nextTeleportTile =
-                        _levelState.Tiles.GetLayoutRow(TileLayoutY).Where(tile => tile.IsTeleportTile)
+                        LevelState.Tiles.GetLayoutRow(TileLayoutY).Where(tile => tile.IsTeleportTile)
                             .FirstOrDefault(tile => tile.TileLayoutX > TileLayoutX);
 
-                    _levelState.Player.GoToTile(nextTeleportTile != null
-                        ? nextTeleportTile.GetRightNeighbourOrDefault(_levelState.Tiles)
-                        : this.GetRightNeighbourOrDefault(_levelState.Tiles));
+                    LevelState.Player.GoToTile(nextTeleportTile != null
+                        ? nextTeleportTile.GetRightNeighbourOrDefault(LevelState.Tiles)
+                        : this.GetRightNeighbourOrDefault(LevelState.Tiles));
                 }
-                else if (_levelState.Player.Direction == Direction.Left)
+                else if (LevelState.Player.Direction == Direction.Left)
                 {
                     var nextTeleportTile =
-                        _levelState.Tiles.GetLayoutRow(TileLayoutY).Where(tile => tile.IsTeleportTile)
+                        LevelState.Tiles.GetLayoutRow(TileLayoutY).Where(tile => tile.IsTeleportTile)
                             .FirstOrDefault(tile => tile.TileLayoutX < TileLayoutX);
 
-                    _levelState.Player.GoToTile(nextTeleportTile != null
-                        ? nextTeleportTile.GetLeftNeighbourOrDefault(_levelState.Tiles)
-                        : this.GetLeftNeighbourOrDefault(_levelState.Tiles));
+                    LevelState.Player.GoToTile(nextTeleportTile != null
+                        ? nextTeleportTile.GetLeftNeighbourOrDefault(LevelState.Tiles)
+                        : this.GetLeftNeighbourOrDefault(LevelState.Tiles));
                 }
-                else if (_levelState.Player.Direction == Direction.Up)
+                else if (LevelState.Player.Direction == Direction.Up)
                 {
                     var nextTeleportTile =
-                        _levelState.Tiles.GetLayoutColumn(TileLayoutX).Where(tile => tile.IsTeleportTile)
+                        LevelState.Tiles.GetLayoutColumn(TileLayoutX).Where(tile => tile.IsTeleportTile)
                             .FirstOrDefault(tile => tile.TileLayoutY < TileLayoutY);
 
-                    _levelState.Player.GoToTile(nextTeleportTile != null
-                        ? nextTeleportTile.GetAboveNeighbourOrDefault(_levelState.Tiles)
-                        : this.GetAboveNeighbourOrDefault(_levelState.Tiles));
+                    LevelState.Player.GoToTile(nextTeleportTile != null
+                        ? nextTeleportTile.GetAboveNeighbourOrDefault(LevelState.Tiles)
+                        : this.GetAboveNeighbourOrDefault(LevelState.Tiles));
                 }
-                else if (_levelState.Player.Direction == Direction.Down)
+                else if (LevelState.Player.Direction == Direction.Down)
                 {
                     var nextTeleportTile =
-                        _levelState.Tiles.GetLayoutColumn(TileLayoutX).Where(tile => tile.IsTeleportTile)
+                        LevelState.Tiles.GetLayoutColumn(TileLayoutX).Where(tile => tile.IsTeleportTile)
                             .FirstOrDefault(tile => tile.TileLayoutY > TileLayoutY);
 
-                    _levelState.Player.GoToTile(nextTeleportTile != null
-                        ? nextTeleportTile.GetBelowNeighbourOrDefault(_levelState.Tiles)
-                        : this.GetBelowNeighbourOrDefault(_levelState.Tiles));
+                    LevelState.Player.GoToTile(nextTeleportTile != null
+                        ? nextTeleportTile.GetBelowNeighbourOrDefault(LevelState.Tiles)
+                        : this.GetBelowNeighbourOrDefault(LevelState.Tiles));
                 }
             }
         }

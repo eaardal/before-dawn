@@ -10,28 +10,25 @@ namespace BeforeDawn.Core.Game.Tiles
 {
     class HazardTile : Tile, IHazard
     {
-        private readonly ILevelState _levelState;
         private const int DamageTickDelay = 200;
         private int _aggregatedGameTime;
 
         public string Hazard { get; private set; }
         public bool IsActive { get; private set; }
         
-        public HazardTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager)
+        public HazardTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager, levelState)
         {
-            if (levelState == null) throw new ArgumentNullException("levelState");
-            _levelState = levelState;
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            if (_levelState.Player.Boundaries.Intersects(Boundaries))
+            if (LevelState.Player.Boundaries.Intersects(Boundaries))
             {
                 _aggregatedGameTime += gameTime.ElapsedGameTime.Milliseconds;
 
                 if (_aggregatedGameTime > DamageTickDelay && IsActive)
                 {
-                    _levelState.Player.Kill();
+                    LevelState.Player.Kill();
                     _aggregatedGameTime = 0;
                 }
             }

@@ -22,20 +22,18 @@ namespace BeforeDawn.Core.Game.Tiles
     /// </summary>
     class SandTile : Tile
     {
-        private readonly ILevelState _levelState;
         private Texture2D _normalTexture;
         private SandTileState _state;
         private Texture2D _sandTexture;
 
-        public SandTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager)
+        public SandTile(IContentManagerAdapter contentManager, ILevelState levelState)
+            : base(contentManager, levelState)
         {
-            if (levelState == null) throw new ArgumentNullException("levelState");
-            _levelState = levelState;
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            if (Boundaries.Contains(_levelState.Player.Boundaries))
+            if (Boundaries.Contains(LevelState.Player.Boundaries))
             {
                 if (_state == SandTileState.Sand)
                 {

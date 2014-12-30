@@ -14,19 +14,16 @@ namespace BeforeDawn.Core.Game.Tiles
     class ConveyorBeltTile : Tile
     {
         private int _aggregatedGameTime;
-        private readonly ILevelState _levelState;
         public Direction Direction { get; private set; }
         public int ConveyorSpeed { get { return 100; } }
 
-        public ConveyorBeltTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager)
+        public ConveyorBeltTile(IContentManagerAdapter contentManager, ILevelState levelState) : base(contentManager, levelState)
         {
-            if (levelState == null) throw new ArgumentNullException("levelState");
-            _levelState = levelState;
         }
 
         public override void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-            if (Boundaries.Intersects(_levelState.Player.Boundaries))
+            if (Boundaries.Intersects(LevelState.Player.Boundaries))
             {
                 _aggregatedGameTime += gameTime.ElapsedGameTime.Milliseconds;
 
@@ -36,9 +33,9 @@ namespace BeforeDawn.Core.Game.Tiles
                 }
 
                 var currentTile =
-                    _levelState.Tiles
+                    LevelState.Tiles
                         .Where(tile => tile.IsConveyorBeltTile)
-                        .Where(tile => tile.Boundaries.Intersects(_levelState.Player.Boundaries))
+                        .Where(tile => tile.Boundaries.Intersects(LevelState.Player.Boundaries))
                         .Cast<ConveyorBeltTile>()
                         .FirstOrDefault();
 
@@ -49,19 +46,19 @@ namespace BeforeDawn.Core.Game.Tiles
 
                 if (currentTile.Direction == Direction.Down)
                 {
-                    _levelState.Player.GoToTile(currentTile.TileLayoutX, currentTile.TileLayoutY + 1);
+                    LevelState.Player.GoToTile(currentTile.TileLayoutX, currentTile.TileLayoutY + 1);
                 }
                 else if (currentTile.Direction == Direction.Right)
                 {
-                    _levelState.Player.GoToTile(currentTile.TileLayoutX + 1, currentTile.TileLayoutY);
+                    LevelState.Player.GoToTile(currentTile.TileLayoutX + 1, currentTile.TileLayoutY);
                 }
                 else if (currentTile.Direction == Direction.Left)
                 {
-                    _levelState.Player.GoToTile(currentTile.TileLayoutX - 1, currentTile.TileLayoutY);
+                    LevelState.Player.GoToTile(currentTile.TileLayoutX - 1, currentTile.TileLayoutY);
                 }
                 else if (currentTile.Direction == Direction.Up)
                 {
-                    _levelState.Player.GoToTile(currentTile.TileLayoutX, currentTile.TileLayoutY - 1);
+                    LevelState.Player.GoToTile(currentTile.TileLayoutX, currentTile.TileLayoutY - 1);
                 }
 
                 _aggregatedGameTime = 0;

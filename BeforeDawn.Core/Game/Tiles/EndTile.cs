@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BeforeDawn.Core.Adapters.Abstract;
+using BeforeDawn.Core.Game.Abstract;
 using BeforeDawn.Core.Game.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -8,8 +9,8 @@ namespace BeforeDawn.Core.Game.Tiles
 {
     class EndTile : Tile
     {
-        public EndTile(IContentManagerAdapter contentManager)
-            : base(contentManager)
+        public EndTile(IContentManagerAdapter contentManager, ILevelState levelState)
+            : base(contentManager, levelState)
         {
         }
 

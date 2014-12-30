@@ -87,6 +87,7 @@
     <Compile Include="Game\LevelState.cs" />
     <Compile Include="Game\Messages\ItemCollected.cs" />
     <Compile Include="Game\Messages\PlayerDied.cs" />
+    <Compile Include="Game\PatrolingMonster.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Tiles\BlockTile.cs" />
     <Compile Include="Game\Tiles\ClosingTriggerTile.cs" />
@@ -101,7 +102,6 @@
     <Compile Include="Game\Tiles\InvisibleTile.cs" />
     <Compile Include="Game\Tiles\MonsterTriggerTile.cs" />
     <Compile Include="Game\Tiles\MovableBlockTile.cs" />
-    <Compile Include="Game\Tiles\PatrolingMonster.cs" />
     <Compile Include="Game\Tiles\SandTile.cs" />
     <Compile Include="Game\Tiles\StartTile.cs" />
     <Compile Include="Game\Tiles\TeleportTile.cs" />
