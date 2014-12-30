@@ -76,6 +76,7 @@
     <Compile Include="Game\HazardProtection.cs" />
     <Compile Include="Game\Helpers\Direction.cs" />
     <Compile Include="Game\Helpers\HazardKinds.cs" />
+    <Compile Include="Game\Helpers\LinqExtensions.cs" />
     <Compile Include="Game\Helpers\TileCollision.cs" />
     <Compile Include="Game\Helpers\TileExtensions.cs" />
     <Compile Include="Game\Helpers\TileMatch.cs" />
